@@ -17,7 +17,7 @@ public class Setup {
 	
 	@Before
 	public void setUp() {
-		logger.info("Executing Setup Function");
+		logger.info("<= In setUp Function =>");
 		
 		try {
 		
@@ -50,7 +50,7 @@ public class Setup {
 			DriverManager.maximizeBrowserWindow();
 		}
 		
-		System.out.println("Scenario Counter Value In Before Hook Is => " +driverManager.getScenarioCounter());
+		logger.info("Scenario Counter Value In Before Hook Is => " +DriverManager.getScenarioCounter());
 
 		} catch(Exception e) {
 			
@@ -61,7 +61,12 @@ public class Setup {
 	
 	@After
 	public void tearDown() {
+		try {
+		 logger.info("<= In tearDown Function =>");
 		 CustomWebDriverManager.getDriver().manage().deleteAllCookies();
 		 CustomWebDriverManager.removeDriver();
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+		}
 	}
 }
