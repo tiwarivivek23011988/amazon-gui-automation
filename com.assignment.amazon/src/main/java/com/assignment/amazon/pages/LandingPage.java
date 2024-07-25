@@ -93,6 +93,7 @@ public class LandingPage {
 
 	public boolean checkForPresenceOfAutoCompleteSuggestion(String searchText) {
 		DriverManager.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
+		DriverManager.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 		for(WebElement element: autoCompleteSuggestions) {
 			DriverManager.waitForElementToBeClickable(element);
 				if(element.getText().equalsIgnoreCase(searchText) || element.getText().toLowerCase().contains(searchText.toLowerCase())) {

@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.w3c.dom.Document;
@@ -28,6 +30,7 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 
 public class CustomTestNGListener implements ITestListener {
+	private static final Logger logger = LogManager.getLogger(CustomTestNGListener.class);
     public static ExtentReports extent;
     private static ExtentSparkReporter sparkReporter;
     static volatile ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>();
@@ -115,7 +118,7 @@ public class CustomTestNGListener implements ITestListener {
             inputStream.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            CustomTestNGListener.logger.error("Exception is raised => " + e.getMessage());
         }
         
         extent.flush();
