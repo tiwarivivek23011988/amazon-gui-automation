@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.assignment.amazon.exceptions.ExceptionHandler;
-import com.assignment.amazon.utilities.DriverManager;
+import com.assignment.amazon.utilities.WebDriverUtilities;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 
@@ -34,10 +34,10 @@ public class CustomCucumberListener implements ConcurrentEventListener {
     private synchronized void handleTestCaseStarted(TestCaseStarted event) {
 		try {
 		logger.info("<= In handleTestCaseStarted Publisher Event =>");
-    	DriverManager.browserCounter();
+    	WebDriverUtilities.browserCounter();
     	
-    	if(DriverManager.getCounter()==DriverManager.getScenarioCounter()) {
-    		DriverManager.resetCounter();
+    	if(WebDriverUtilities.getCounter()==WebDriverUtilities.getScenarioCounter()) {
+    		WebDriverUtilities.resetCounter();
     	}
     	
     	if (CustomTestNGListener.extent == null) {
@@ -45,7 +45,7 @@ public class CustomCucumberListener implements ConcurrentEventListener {
          }
          ExtentTest test = CustomTestNGListener.extent.createTest(event.getTestCase().getName());
          CustomTestNGListener.extentTest.set(test);
-         CustomTestNGListener.extentTest.get().log(Status.INFO, "Browser Name: " + DriverManager.browserName.get().toUpperCase());
+         CustomTestNGListener.extentTest.get().log(Status.INFO, "Browser Name: " + WebDriverUtilities.browserName.get().toUpperCase());
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}

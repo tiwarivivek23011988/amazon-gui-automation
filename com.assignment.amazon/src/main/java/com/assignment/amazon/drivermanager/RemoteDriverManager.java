@@ -9,7 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.assignment.amazon.exceptions.ExceptionHandler;
-import com.assignment.amazon.utilities.DriverManager;
+import com.assignment.amazon.utilities.WebDriverUtilities;
 
 public class RemoteDriverManager implements AbstractDriverFunction<WebDriver,MutableCapabilities>{
 	
@@ -19,7 +19,7 @@ public class RemoteDriverManager implements AbstractDriverFunction<WebDriver,Mut
 	public synchronized WebDriver getDriver() {
 		try {
 			logger.info("<= In getDriver function of RemoteDriverManager class =>");
-			return new RemoteWebDriver(new URL((String) DriverManager.hashMap.get("gridUrl")),getCapabilities());
+			return new RemoteWebDriver(new URL((String) WebDriverUtilities.hashMap.get("gridUrl")),getCapabilities());
 		} catch (Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
@@ -29,7 +29,7 @@ public class RemoteDriverManager implements AbstractDriverFunction<WebDriver,Mut
 	@Override
 	public MutableCapabilities getCapabilities() {
 		logger.info("<= In getCapabilities function of RemoteDriverManager class =>");
-		return DriverOptionsFactory.getOptions(DriverManager.browserName.get());
+		return DriverOptionsFactory.getOptions(WebDriverUtilities.browserName.get());
 	}
 
 }

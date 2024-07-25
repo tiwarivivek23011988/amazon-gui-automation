@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.assignment.amazon.drivermanager.CustomWebDriverManager;
 import com.assignment.amazon.exceptions.ExceptionHandler;
-import com.assignment.amazon.utilities.DriverManager;
+import com.assignment.amazon.utilities.WebDriverUtilities;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -21,7 +21,7 @@ public class Setup {
 		
 		try {
 		
-		switch(DriverManager.browserName.get()) {
+		switch(WebDriverUtilities.browserName.get()) {
 		case "chrome" -> {
 			WebDriverManager.chromedriver().clearDriverCache().setup();
 		}
@@ -34,23 +34,23 @@ public class Setup {
 		case "safari" -> {
 			WebDriverManager.safaridriver().clearDriverCache().setup();
 		}
-		default -> ExceptionHandler.throwsException(new IllegalArgumentException("Browser type not supported: " + DriverManager.browserName.get()));
+		default -> ExceptionHandler.throwsException(new IllegalArgumentException("Browser type not supported: " + WebDriverUtilities.browserName.get()));
 		}
 		
-		DriverManager driverManager = new DriverManager();
+		WebDriverUtilities driverManager = new WebDriverUtilities();
 		
 		CustomWebDriverManager.setDriver(driverManager.getDriver());
 		
 		/**
 		 * Explicit browser handling since some firefox browser version has compatibility issues
 		 */
-		if(DriverManager.browserName.get().equalsIgnoreCase("firefox")) {
-			DriverManager.setBrowserSize();
+		if(WebDriverUtilities.browserName.get().equalsIgnoreCase("firefox")) {
+			WebDriverUtilities.setBrowserSize();
 		} else {
-			DriverManager.maximizeBrowserWindow();
+			WebDriverUtilities.maximizeBrowserWindow();
 		}
 		
-		logger.info("Scenario Counter Value In Before Hook Is => " +DriverManager.getScenarioCounter());
+		logger.info("Scenario Counter Value In Before Hook Is => " +WebDriverUtilities.getScenarioCounter());
 
 		} catch(Exception e) {
 			

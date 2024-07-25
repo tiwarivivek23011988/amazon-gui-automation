@@ -11,7 +11,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import com.assignment.amazon.exceptions.ExceptionHandler;
-import com.assignment.amazon.utilities.DriverManager;
+import com.assignment.amazon.utilities.WebDriverUtilities;
 
 public class LandingPage {
 	
@@ -59,13 +59,13 @@ public class LandingPage {
 	public void selectCategoryFromDropdown(String dropDownValue) {
 		try {
 		logger.info("<= In selectCategoryFromDropdown function =>");
-		DriverManager.waitForElementClickabilityUsingFluentWait(categoryDropDownById);
-		DriverManager.clickOnWebElement(categoryDropDownById);
-		DriverManager.waitForElementsVisibilityUsingFluentWait(searchWebElement);
+		WebDriverUtilities.waitForElementClickabilityUsingFluentWait(categoryDropDownById);
+		WebDriverUtilities.clickOnWebElement(categoryDropDownById);
+		WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(searchWebElement);
 		for(WebElement element: searchWebElement) {
 			if(element.getText().equalsIgnoreCase(dropDownValue)) {
-				DriverManager.waitForElementClickabilityUsingFluentWait(element);
-				DriverManager.clickOnWebElement(element);
+				WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
+				WebDriverUtilities.clickOnWebElement(element);
 				
 				System.out.println("categoryDropDown element text is => " + categoryDropDownByXPath.getText());
 				break;
@@ -80,7 +80,7 @@ public class LandingPage {
 	try {
 		logger.info("<= In inputTextInSearchBox function =>");
 		searchBox.clear();
-		DriverManager.clickOnWebElement(searchBox);
+		WebDriverUtilities.clickOnWebElement(searchBox);
 		searchBox.sendKeys(inputText);
 	 } catch(Exception e) {
 		  ExceptionHandler.throwsException(e);
@@ -90,9 +90,9 @@ public class LandingPage {
 	public List<String> storeAutoCompleteSuggestions() {
 		try {
 			logger.info("<= In storeAutoCompleteSuggestions function =>");
-			DriverManager.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
+			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 			for(WebElement element: autoCompleteSuggestions) {
-				DriverManager.waitForElementToBeClickable(element);
+				WebDriverUtilities.waitForElementToBeClickable(element);
 			}
 			return autoCompleteSuggestions.stream().map(x -> x.getText()).collect(Collectors.toList());
 		 } catch(Exception e) {
@@ -104,7 +104,7 @@ public class LandingPage {
 	public WebElement returnElementMatchingAutoSuggestedText(String inputText) {
 		try {
 			logger.info("<= In returnElementMatchingAutoSuggestedText function =>");
-			DriverManager.waitUntilVisibilityOfAllElementsLocated(autoCompleteSuggestions);
+			WebDriverUtilities.waitUntilVisibilityOfAllElementsLocated(autoCompleteSuggestions);
 			for(WebElement element: autoCompleteSuggestions) {
 				 if(element.getText().equalsIgnoreCase(inputText.toLowerCase()) ||
 				 element.getText().toLowerCase().contains(inputText.toLowerCase())) { 
@@ -120,10 +120,10 @@ public class LandingPage {
 	public boolean checkForPresenceOfAutoCompleteSuggestion(String searchText) {
 		try {
 			logger.info("<= In checkForPresenceOfAutoCompleteSuggestion function =>");
-			DriverManager.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
-			DriverManager.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
+			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
+			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 			for(WebElement element: autoCompleteSuggestions) {
-				DriverManager.waitForElementToBeClickable(element);
+				WebDriverUtilities.waitForElementToBeClickable(element);
 					if(element.getText().equalsIgnoreCase(searchText) || element.getText().toLowerCase().contains(searchText.toLowerCase())) {
 						return true;
 				}
@@ -152,7 +152,7 @@ public class LandingPage {
 	public List<String> storeResultsCatalogElementsText(String searchText) {
 		try {
 			logger.info("<= In storeResultsCatalogElementsText function =>");
-			DriverManager.waitUntilVisibilityOfAllElementsLocated(listOfSearchedProducts);
+			WebDriverUtilities.waitUntilVisibilityOfAllElementsLocated(listOfSearchedProducts);
 			return listOfSearchedProducts.stream().filter(x -> (x.getText().replaceAll("[^A-Za-z0-9 ]+", "").equalsIgnoreCase(searchText) || x.getText().replaceAll("[^A-Za-z0-9 ]+", "").toLowerCase().contains(searchText.toLowerCase()))).map(x -> x.getText().replaceAll("[^A-Za-z0-9 ]+", "")).collect(Collectors.toList());
 		 } catch(Exception e) {
 			  ExceptionHandler.throwsException(e);
@@ -163,7 +163,7 @@ public class LandingPage {
 	public String getProductNameFromTitle() {
 		try {
 			logger.info("<= In getProductNameFromTitle function =>");
-			DriverManager.waitForElementToBeVisible(productTitle);
+			WebDriverUtilities.waitForElementToBeVisible(productTitle);
 			return productTitle.getText().replaceAll("[^A-Za-z0-9 ]+", "");
 		 } catch(Exception e) {
 			  ExceptionHandler.throwsException(e);

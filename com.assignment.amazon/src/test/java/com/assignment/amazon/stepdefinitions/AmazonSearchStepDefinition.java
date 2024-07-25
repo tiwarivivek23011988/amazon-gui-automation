@@ -12,7 +12,7 @@ import org.testng.Assert;
 import com.assignment.amazon.drivermanager.CustomWebDriverManager;
 import com.assignment.amazon.exceptions.ExceptionHandler;
 import com.assignment.amazon.pages.LandingPage;
-import com.assignment.amazon.utilities.DriverManager;
+import com.assignment.amazon.utilities.WebDriverUtilities;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -29,7 +29,7 @@ public class AmazonSearchStepDefinition {
 	@Given("User navigates to amazon page")
 	public void userNavigatesToAmazonPage() {
 		logger.info("<= In userNavigatesToAmazonPage function => " +Thread.currentThread().getName());
-		driver.get((String) DriverManager.hashMap.get("url"));
+		driver.get((String) WebDriverUtilities.hashMap.get("url"));
 		
 	}
 	
@@ -60,7 +60,7 @@ public class AmazonSearchStepDefinition {
 	public void userClicksOnAutoCompleteSuggestionMatchingSearchText(String searchText) {
 		logger.info("<= In userClicksOnAutoCompleteSuggestionMatchingSearchText function => ");
 		Assert.assertTrue(landingPage.checkForPresenceOfAutoCompleteSuggestion(searchText));
-		DriverManager.clickOnWebElement(landingPage.returnElementMatchingAutoSuggestedText(searchText));
+		WebDriverUtilities.clickOnWebElement(landingPage.returnElementMatchingAutoSuggestedText(searchText));
 		
 	}
 	
@@ -80,15 +80,15 @@ public class AmazonSearchStepDefinition {
 	public void userValidatesThatProductSpecificationPageOpensInNewTab(String searchText) {
 		try {
 			logger.info("<= In userValidatesThatProductSpecificationPageOpensInNewTab function => ");
-			Set<String> set = DriverManager.getWindowHandles();
+			Set<String> set = WebDriverUtilities.getWindowHandles();
 			Assert.assertTrue(set.size()>1);
 			Iterator<String> itr = set.iterator();
 			String parentWindowHandle = itr.next();
 			String childWindowHandle = itr.next();
-			CustomWebDriverManager.setDriver(DriverManager.switchToWindowHandle(childWindowHandle));
+			CustomWebDriverManager.setDriver(WebDriverUtilities.switchToWindowHandle(childWindowHandle));
 			Assert.assertTrue(landingPage.getProductNameFromTitle().toLowerCase().contains(searchText.toLowerCase()));
 			driver.close();
-			CustomWebDriverManager.setDriver(DriverManager.switchToWindowHandle(parentWindowHandle));
+			CustomWebDriverManager.setDriver(WebDriverUtilities.switchToWindowHandle(parentWindowHandle));
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}

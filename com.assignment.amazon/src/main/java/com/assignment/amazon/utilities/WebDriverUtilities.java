@@ -27,8 +27,8 @@ import com.assignment.amazon.drivermanager.SafariDriverManager;
 import com.assignment.amazon.exceptions.ExceptionHandler;
 
 
-public final class DriverManager {
-	private static final Logger logger = LogManager.getLogger(DriverManager.class);
+public final class WebDriverUtilities {
+	private static final Logger logger = LogManager.getLogger(WebDriverUtilities.class);
 	public static JsonParser jsonParser = new JsonParser();
 	public static String filePath = FileSearchUtility.searchFile("src/test/resources", "data.json");
 	public static HashMap<String, ?> hashMap;
@@ -46,8 +46,8 @@ public final class DriverManager {
 		try {
 		logger.info("<= In browserCounter method => " +Thread.currentThread().getName());
 		int counter = ParallelCounter.getCounter();
-		if(counter < DriverManager.browserNames.size()) {
-			browserName.set((String) DriverManager.browserNames.get(counter));
+		if(counter < WebDriverUtilities.browserNames.size()) {
+			browserName.set((String) WebDriverUtilities.browserNames.get(counter));
 			System.out.println("Counter Value Is => " +counter);
 			System.out.println("Browser Name Is => " +browserName.get());
 			ParallelCounter.incrementCounter();
