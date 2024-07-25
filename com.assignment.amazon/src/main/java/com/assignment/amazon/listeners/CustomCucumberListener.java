@@ -37,7 +37,7 @@ public class CustomCucumberListener implements ConcurrentEventListener {
          }
          ExtentTest test = CustomTestNGListener.extent.createTest(event.getTestCase().getName());
          CustomTestNGListener.extentTest.set(test);
-         CustomTestNGListener.extentTest.get().log(Status.INFO, "Browser Name: " + DriverManager.browserName.get());
+         CustomTestNGListener.extentTest.get().log(Status.INFO, "Browser Name: " + DriverManager.browserName.get().toUpperCase());
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
