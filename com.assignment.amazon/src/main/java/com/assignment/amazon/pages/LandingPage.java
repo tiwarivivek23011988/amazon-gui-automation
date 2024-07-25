@@ -3,15 +3,20 @@ package com.assignment.amazon.pages;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import com.assignment.amazon.exceptions.ExceptionHandler;
 import com.assignment.amazon.utilities.DriverManager;
 
 public class LandingPage {
 	
+	private static final Logger logger = LogManager.getLogger(LandingPage.class);
+
 	public LandingPage(WebDriver driver) {
 		
 		PageFactory.initElements(driver, this);
@@ -52,6 +57,8 @@ public class LandingPage {
 	
 	
 	public void selectCategoryFromDropdown(String dropDownValue) {
+		try {
+		logger.info("<= In selectCategoryFromDropdown function =>");
 		DriverManager.waitForElementClickabilityUsingFluentWait(categoryDropDownById);
 		DriverManager.clickOnWebElement(categoryDropDownById);
 		DriverManager.waitForElementsVisibilityUsingFluentWait(searchWebElement);
@@ -64,63 +71,104 @@ public class LandingPage {
 				break;
 			}
 		}
+	  } catch(Exception e) {
+		  ExceptionHandler.throwsException(e);
+	  }
 	}
 	
 	public void inputTextInSearchBox(String inputText) {
+	try {
+		logger.info("<= In inputTextInSearchBox function =>");
 		searchBox.clear();
 		DriverManager.clickOnWebElement(searchBox);
 		searchBox.sendKeys(inputText);
+	 } catch(Exception e) {
+		  ExceptionHandler.throwsException(e);
+	  }
 	}
 	
 	public List<String> storeAutoCompleteSuggestions() {
-		DriverManager.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
-		for(WebElement element: autoCompleteSuggestions) {
-			DriverManager.waitForElementToBeClickable(element);
-		}
-		return autoCompleteSuggestions.stream().map(x -> x.getText()).collect(Collectors.toList());
+		try {
+			logger.info("<= In storeAutoCompleteSuggestions function =>");
+			DriverManager.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
+			for(WebElement element: autoCompleteSuggestions) {
+				DriverManager.waitForElementToBeClickable(element);
+			}
+			return autoCompleteSuggestions.stream().map(x -> x.getText()).collect(Collectors.toList());
+		 } catch(Exception e) {
+			  ExceptionHandler.throwsException(e);
+		 }
+		return null;
 	}
 	
 	public WebElement returnElementMatchingAutoSuggestedText(String inputText) {
-		DriverManager.waitUntilVisibilityOfAllElementsLocated(autoCompleteSuggestions);
-		for(WebElement element: autoCompleteSuggestions) {
-			 if(element.getText().equalsIgnoreCase(inputText.toLowerCase()) ||
-			 element.getText().toLowerCase().contains(inputText.toLowerCase())) { 
-				 return element;
+		try {
+			logger.info("<= In returnElementMatchingAutoSuggestedText function =>");
+			DriverManager.waitUntilVisibilityOfAllElementsLocated(autoCompleteSuggestions);
+			for(WebElement element: autoCompleteSuggestions) {
+				 if(element.getText().equalsIgnoreCase(inputText.toLowerCase()) ||
+				 element.getText().toLowerCase().contains(inputText.toLowerCase())) { 
+					 return element;
+				}
 			}
+		 } catch(Exception e) {
+			  ExceptionHandler.throwsException(e);
 		}
 		return null;
 	}
 
 	public boolean checkForPresenceOfAutoCompleteSuggestion(String searchText) {
-		DriverManager.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
-		DriverManager.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
-		for(WebElement element: autoCompleteSuggestions) {
-			DriverManager.waitForElementToBeClickable(element);
-				if(element.getText().equalsIgnoreCase(searchText) || element.getText().toLowerCase().contains(searchText.toLowerCase())) {
-					return true;
+		try {
+			logger.info("<= In checkForPresenceOfAutoCompleteSuggestion function =>");
+			DriverManager.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
+			DriverManager.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
+			for(WebElement element: autoCompleteSuggestions) {
+				DriverManager.waitForElementToBeClickable(element);
+					if(element.getText().equalsIgnoreCase(searchText) || element.getText().toLowerCase().contains(searchText.toLowerCase())) {
+						return true;
+				}
 			}
+		 } catch(Exception e) {
+			  ExceptionHandler.throwsException(e);
 		}
 		return false;
 	}
 	
 	public void clickOnFirstResultFromResultsCatalog(String searchText) {
-		for(WebElement element:listOfSearchedProducts) {
-			String formattedString=element.getText().replaceAll("[^A-Za-z0-9 ]+", "");
-			if(formattedString.equalsIgnoreCase(searchText) || formattedString.toLowerCase().contains(searchText.toLowerCase())) {
-				element.click();
-				break;
+		try {
+			logger.info("<= In clickOnFirstResultFromResultsCatalog function =>");
+			for(WebElement element:listOfSearchedProducts) {
+				String formattedString=element.getText().replaceAll("[^A-Za-z0-9 ]+", "");
+				if(formattedString.equalsIgnoreCase(searchText) || formattedString.toLowerCase().contains(searchText.toLowerCase())) {
+					element.click();
+					break;
+				}
 			}
-		}
+	 	} catch(Exception e) {
+		  ExceptionHandler.throwsException(e);
+	  }
 	}
 	
 	public List<String> storeResultsCatalogElementsText(String searchText) {
-		DriverManager.waitUntilVisibilityOfAllElementsLocated(listOfSearchedProducts);
-		return listOfSearchedProducts.stream().filter(x -> (x.getText().replaceAll("[^A-Za-z0-9 ]+", "").equalsIgnoreCase(searchText) || x.getText().replaceAll("[^A-Za-z0-9 ]+", "").toLowerCase().contains(searchText.toLowerCase()))).map(x -> x.getText().replaceAll("[^A-Za-z0-9 ]+", "")).collect(Collectors.toList());
+		try {
+			logger.info("<= In storeResultsCatalogElementsText function =>");
+			DriverManager.waitUntilVisibilityOfAllElementsLocated(listOfSearchedProducts);
+			return listOfSearchedProducts.stream().filter(x -> (x.getText().replaceAll("[^A-Za-z0-9 ]+", "").equalsIgnoreCase(searchText) || x.getText().replaceAll("[^A-Za-z0-9 ]+", "").toLowerCase().contains(searchText.toLowerCase()))).map(x -> x.getText().replaceAll("[^A-Za-z0-9 ]+", "")).collect(Collectors.toList());
+		 } catch(Exception e) {
+			  ExceptionHandler.throwsException(e);
+		}
+		return null;
 	}
 	
 	public String getProductNameFromTitle() {
-		DriverManager.waitForElementToBeVisible(productTitle);
-		return productTitle.getText().replaceAll("[^A-Za-z0-9 ]+", "");
+		try {
+			logger.info("<= In getProductNameFromTitle function =>");
+			DriverManager.waitForElementToBeVisible(productTitle);
+			return productTitle.getText().replaceAll("[^A-Za-z0-9 ]+", "");
+		 } catch(Exception e) {
+			  ExceptionHandler.throwsException(e);
+		}
+		return null;
 	}
 
 }

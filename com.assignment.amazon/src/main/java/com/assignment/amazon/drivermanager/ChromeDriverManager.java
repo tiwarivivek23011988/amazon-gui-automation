@@ -6,8 +6,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import com.assignment.amazon.configuration.Setup;
-
 public class ChromeDriverManager implements AbstractDriverFunction<WebDriver,ChromeOptions>{
 
 	private static final Logger logger = LogManager.getLogger(ChromeDriverManager.class);

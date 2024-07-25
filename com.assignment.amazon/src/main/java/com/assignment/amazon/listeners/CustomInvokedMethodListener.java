@@ -1,25 +1,26 @@
 package com.assignment.amazon.listeners;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ITestResult;
 
-import com.assignment.amazon.utilities.DriverManager;
-
 public class CustomInvokedMethodListener implements IInvokedMethodListener {
+
+	private static final Logger logger = LogManager.getLogger(CustomInvokedMethodListener.class);
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         if (method.isTestMethod()) {
-            //DriverManager.browserCounter();
+            logger.info("<= In beforeInvocation funtion =>");
         }
     }
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-        // After invocation logic
     	if(method.isTestMethod()) {
-    		//DriverManager.resetCounter();
+    		logger.info("<= In afterInvocation funtion =>");
     	}
     }
 }

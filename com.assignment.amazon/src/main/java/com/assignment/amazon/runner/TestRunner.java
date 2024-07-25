@@ -18,8 +18,9 @@ public class TestRunner extends AbstractTestNGCucumberTests {
 	@Override
     @DataProvider(parallel = true)
     public Object[][] scenarios() {
+		logger.info("<= In scenarios function =>");
 		int numOfScenarios=super.scenarios().length;
-		System.out.println("Number of Scenarios Are:" +numOfScenarios);
+		logger.info("Number of Scenarios Are:" +numOfScenarios);
 		ParallelCounter.scenarioCounter.set(numOfScenarios);
         return super.scenarios();
     }

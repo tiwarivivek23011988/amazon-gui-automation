@@ -21,6 +21,7 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.assignment.amazon.exceptions.ExceptionHandler;
 import com.assignment.amazon.utilities.FileSearchUtility;
 import com.assignment.amazon.utilities.RandomUtilities;
 import com.aventstack.extentreports.ExtentReports;
@@ -36,6 +37,8 @@ public class CustomTestNGListener implements ITestListener {
     static volatile ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>();
     
     public static synchronized ExtentReports createInstance() {
+    	logger.info("<= In createInstance function =>");
+    	try {
     	sparkReporter = new ExtentSparkReporter(System.getProperty("user.dir") + "/test-output/ExtentReport.html");
         sparkReporter.config().setDocumentTitle("Automation Report");
         sparkReporter.config().setReportName("Regression Testing");
@@ -47,38 +50,44 @@ public class CustomTestNGListener implements ITestListener {
         extent.setSystemInfo("User Name", RandomUtilities.getUserName());
         extent.setSystemInfo("OS Version", RandomUtilities.getOsVersion());
         extent.setSystemInfo("OS Architecture", RandomUtilities.getOsArchitecture());
+    	} catch(Exception e) {
+    		ExceptionHandler.throwsException(e);
+    	}
         return extent;
     }
     
     public synchronized static ExtentReports getInstance() {
+    	logger.info("<= In getInstance function =>");
         return extent;
     }
 
     @Override
     public synchronized void onTestStart(ITestResult result) {
-    	System.out.println("Test Case started!");
+    	logger.info("Test Case started!");
+    	logger.info("<= In onTestStart function =>");
     }
 
     @Override
     public synchronized void onTestSuccess(ITestResult result) {
-    	
-            extentTest.get().log(Status.PASS, "Test Passed");
+    	logger.info("<= In onTestSuccess function =>");
+       extentTest.get().log(Status.PASS, "Test Passed");
     }
     
     @Override
     public synchronized void onTestFailure(ITestResult result) {
-    	
-            extentTest.get().log(Status.FAIL, "Test Failed");
-            extentTest.get().log(Status.FAIL, result.getThrowable());
+       logger.info("<= In onTestFailure function =>");
+       extentTest.get().log(Status.FAIL, "Test Failed");
+       extentTest.get().log(Status.FAIL, result.getThrowable());
     }
 
     @Override
     public synchronized void onTestSkipped(ITestResult result) {
-    	
-          extentTest.get().log(Status.SKIP, "Test Skipped");
+      logger.info("<= In onTestSkipped function =>");
+      extentTest.get().log(Status.SKIP, "Test Skipped");
     }
     
     public static synchronized void extentReportPreProcessing() {
+        logger.info("<= In extentReportPreProcessing function =>");
     	
     	ExtentTest test = extent.createTest("Test Coverage Report");
 
@@ -118,14 +127,16 @@ public class CustomTestNGListener implements ITestListener {
             inputStream.close();
 
         } catch (Exception e) {
-            CustomTestNGListener.logger.error("Exception is raised => " + e.getMessage());
+        	ExceptionHandler.throwsException(e);
         }
         
         extent.flush();
     }
     
     private synchronized static void extractAndLogCoverageInfo(Document doc, ExtentTest test) {
-        NodeList packageList = doc.getElementsByTagName("package");
+        try {
+        CustomTestNGListener.logger.info("<= In extractAndLogCoverageInfo function =>");
+    	NodeList packageList = doc.getElementsByTagName("package");
         for (int i = 0; i < packageList.getLength(); i++) {
             Node packageNode = packageList.item(i);
             if (packageNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -179,6 +190,9 @@ public class CustomTestNGListener implements ITestListener {
                     }
                 }
             }
+        }
+        } catch(Exception e) {
+        	ExceptionHandler.throwsException(e);
         }
     }
  }
