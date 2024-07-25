@@ -82,15 +82,21 @@ public final class WebDriverUtilities {
 	public synchronized WebDriver getDriver() {
 		try {
 			logger.info("<= In getDriver method => " +Thread.currentThread().getName());
-			WebDriver driver = switch(browserName.get()) {
-			case "chrome" -> new ChromeDriverManager().getDriver();
-			case "firefox" -> new FirefoxDriverManager().getDriver();
-			case "edge" -> new EdgeDriverManager().getDriver();
-			case "safari" -> new SafariDriverManager().getDriver();
-			case "remote" -> new RemoteDriverManager().getDriver();
-			default -> throw new IllegalArgumentException("Browser type not supported: " + browserName.get());
-		};
-		return driver;
+			String runType=hashMap.get("runType").toString().toLowerCase();
+			WebDriver driver=switch(runType) {
+			case "local" -> {
+				yield switch(browserName.get()) {
+					case "chrome" -> new ChromeDriverManager().getDriver();
+					case "firefox" -> new FirefoxDriverManager().getDriver();
+					case "edge" -> new EdgeDriverManager().getDriver();
+					case "safari" -> new SafariDriverManager().getDriver();
+					default -> throw new IllegalArgumentException("Browser type not supported: " + browserName.get());
+					};
+				}
+			case "remote" -> {yield new RemoteDriverManager().getDriver();}
+			default -> throw new IllegalArgumentException("Unexpected value: " + hashMap.get("runType").toString().toLowerCase());
+			};
+			return driver;
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}

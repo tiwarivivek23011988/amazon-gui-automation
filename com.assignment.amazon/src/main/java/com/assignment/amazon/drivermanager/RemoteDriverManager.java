@@ -19,7 +19,8 @@ public class RemoteDriverManager implements AbstractDriverFunction<WebDriver,Mut
 	public synchronized WebDriver getDriver() {
 		try {
 			logger.info("<= In getDriver function of RemoteDriverManager class =>");
-			return new RemoteWebDriver(new URL((String) WebDriverUtilities.hashMap.get("gridUrl")),getCapabilities());
+			String url = (String)WebDriverUtilities.hashMap.get("gridBaseUrl")+(String)WebDriverUtilities.hashMap.get("gridPathParam");
+			return new RemoteWebDriver(new URL(url),getCapabilities());
 		} catch (Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
