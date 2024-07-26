@@ -26,10 +26,10 @@ public class Setup {
 			WebDriverManager.chromedriver().clearDriverCache().setup();
 		}
 		case "firefox" -> {
-		WebDriverManager.firefoxdriver().clearDriverCache().setup();
+			WebDriverManager.firefoxdriver().clearDriverCache().setup();
 		}
 		case "edge" -> {
-		WebDriverManager.edgedriver().clearDriverCache().setup();
+			WebDriverManager.edgedriver().clearDriverCache().setup();
 		}
 		case "safari" -> {
 			WebDriverManager.safaridriver().clearDriverCache().setup();

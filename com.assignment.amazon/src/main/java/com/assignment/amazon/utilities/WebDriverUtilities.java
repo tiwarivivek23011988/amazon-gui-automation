@@ -33,13 +33,15 @@ public final class WebDriverUtilities {
 	public static String filePath = FileSearchUtility.searchFile("src/test/resources", "data.json");
 	public static HashMap<String, ?> hashMap;
 	public static volatile List<?> browserNames;
-	public static ThreadLocal<String> browserName=new ThreadLocal<>();
-	public static ThreadLocal<String> browserVersion=new ThreadLocal<>();;
+	public static final ThreadLocal<String> browserName;
+	public static final ThreadLocal<String> browserVersion;
 	static {
 		jsonParser = new JsonParser();
 		filePath = FileSearchUtility.searchFile("src/test/resources", "data.json");
 		hashMap = jsonParser.parseJson(filePath);
 		browserNames=(List<?>) hashMap.get("browserName");
+		browserName=new ThreadLocal<>();
+		browserVersion=new ThreadLocal<>();
 	}
 	
 	public static synchronized void browserCounter() {
@@ -48,11 +50,12 @@ public final class WebDriverUtilities {
 		int counter = ParallelCounter.getCounter();
 		if(counter < WebDriverUtilities.browserNames.size()) {
 			browserName.set((String) WebDriverUtilities.browserNames.get(counter));
-			System.out.println("Counter Value Is => " +counter);
-			System.out.println("Browser Name Is => " +browserName.get());
+			logger.info("Counter Value Is => " +counter);
+			logger.info("Browser Name Is => " +browserName.get());
 			ParallelCounter.incrementCounter();
 		} else {
 			ParallelCounter.resetCounter();
+			browserName.set((String) WebDriverUtilities.browserNames.get(ParallelCounter.getCounter()));
 		}
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
@@ -83,6 +86,7 @@ public final class WebDriverUtilities {
 		try {
 			logger.info("<= In getDriver method => " +Thread.currentThread().getName());
 			String runType=hashMap.get("runType").toString().toLowerCase();
+			logger.info("<= runType value is => " + runType);
 			WebDriver driver=switch(runType) {
 			case "local" -> {
 				yield switch(browserName.get()) {
