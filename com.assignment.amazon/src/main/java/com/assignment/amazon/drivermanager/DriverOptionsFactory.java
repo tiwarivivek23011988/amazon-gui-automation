@@ -6,6 +6,7 @@ import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.safari.SafariOptions;
 
@@ -23,6 +24,7 @@ public class DriverOptionsFactory {
             case "firefox" -> getFirefoxOptions();
             case "safari" -> getSafariOptions();
             case "explorer" -> getInternetExplorerOptions();
+            case "edge" -> getEdgeOptions();
             default -> throw new IllegalArgumentException("Browser type not supported: " + browser);
         };
 		} catch(Exception e) {
@@ -72,7 +74,18 @@ public class DriverOptionsFactory {
     	return null;
     }
 
-    static EdgeOptions getInternetExplorerOptions() {
+    static InternetExplorerOptions getInternetExplorerOptions() {
+    	try {
+    	logger.info("<= In getInternetExplorerOptions function =>");
+        InternetExplorerOptions options = new InternetExplorerOptions();
+        return options;
+    	} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+		}
+    	return null;
+    }
+    
+    static EdgeOptions getEdgeOptions() {
     	try {
     	logger.info("<= In getInternetExplorerOptions function =>");
         EdgeOptions options = new EdgeOptions();

@@ -5,21 +5,23 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.ie.InternetExplorerOptions;
 
-public class EdgeDriverManager implements AbstractDriverFunction<WebDriver,EdgeOptions>{
+public class InternetExplorerDriverManager implements AbstractDriverFunction<WebDriver,InternetExplorerOptions>{
 
-	private static final Logger logger = LogManager.getLogger(EdgeDriverManager.class);
+	private static final Logger logger = LogManager.getLogger(InternetExplorerDriverManager.class);
 
 	@Override
 	public synchronized WebDriver getDriver() {
 		logger.info("<= In getDriver function of EdgeDriverManager class =>");
-		return new EdgeDriver(getCapabilities());
+		return new InternetExplorerDriver(getCapabilities());
 	}
 
 	@Override
-	public EdgeOptions getCapabilities() {
+	public InternetExplorerOptions getCapabilities() {
 		logger.info("<= In getCapabilities function of EdgeDriverManager class =>");
-		return DriverOptionsFactory.getEdgeOptions();
+		return DriverOptionsFactory.getInternetExplorerOptions();
 	}
 
 }

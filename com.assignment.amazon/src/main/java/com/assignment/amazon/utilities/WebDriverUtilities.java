@@ -22,6 +22,7 @@ import com.assignment.amazon.drivermanager.ChromeDriverManager;
 import com.assignment.amazon.drivermanager.CustomWebDriverManager;
 import com.assignment.amazon.drivermanager.EdgeDriverManager;
 import com.assignment.amazon.drivermanager.FirefoxDriverManager;
+import com.assignment.amazon.drivermanager.InternetExplorerDriverManager;
 import com.assignment.amazon.drivermanager.RemoteDriverManager;
 import com.assignment.amazon.drivermanager.SafariDriverManager;
 import com.assignment.amazon.exceptions.ExceptionHandler;
@@ -94,6 +95,7 @@ public final class WebDriverUtilities {
 					case "firefox" -> new FirefoxDriverManager().getDriver();
 					case "edge" -> new EdgeDriverManager().getDriver();
 					case "safari" -> new SafariDriverManager().getDriver();
+					case "explorer" -> new InternetExplorerDriverManager().getDriver();
 					default -> throw new IllegalArgumentException("Browser type not supported: " + browserName.get());
 					};
 				}
