@@ -34,6 +34,9 @@ public class Setup {
 		case "safari" -> {
 			WebDriverManager.safaridriver().clearDriverCache().setup();
 		}
+		case "explorer" -> {
+			WebDriverManager.iedriver().clearDriverCache().setup();
+		}
 		default -> ExceptionHandler.throwsException(new IllegalArgumentException("Browser type not supported: " + WebDriverUtilities.browserName.get()));
 		}
 		
