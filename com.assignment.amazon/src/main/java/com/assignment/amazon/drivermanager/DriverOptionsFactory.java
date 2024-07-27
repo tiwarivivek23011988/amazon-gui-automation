@@ -1,3 +1,7 @@
+/**
+ * @author - Vivek Tiwari
+ */
+
 package com.assignment.amazon.drivermanager;
 
 import org.apache.logging.log4j.LogManager;
@@ -6,16 +10,40 @@ import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.safari.SafariOptions;
 
 import com.assignment.amazon.exceptions.ExceptionHandler;
 
+
+/**
+ * 
+ * {@summary}
+ * 
+ * The DriverOptionsFactory Class
+ * 
+ * A factory for creating DriverOptions objects.
+ * 
+ * This is a helper class which returns different driver specific options
+ * as per provider browser names.
+ * 
+ * @see DriverOptionsFactory
+ * 
+ */
+
 public class DriverOptionsFactory {
 	
+	/** The Constant logger. */
 	private static final Logger logger = LogManager.getLogger(DriverOptionsFactory.class);
 	
+	/**
+	 * Gets the options.
+	 *
+	 * @param browser - the browser
+	 * @return the options
+	 */
 	public static MutableCapabilities getOptions(String browser) {
 		try {
 		logger.info("<= In getOptions function =>");
@@ -33,6 +61,11 @@ public class DriverOptionsFactory {
 		return null;
     }
 
+    /**
+     * Gets the chrome options.
+     *
+     * @return the chrome options
+     */
     static ChromeOptions getChromeOptions() {
     	try {
     	logger.info("<= In getChromeOptions function =>");
@@ -50,10 +83,17 @@ public class DriverOptionsFactory {
     	return null;
     }
 
+    /**
+     * Gets the firefox options.
+     *
+     * @return the firefox options
+     */
     static FirefoxOptions getFirefoxOptions() {
     	try {
     	logger.info("<= In getFirefoxOptions function =>");
+    	FirefoxProfile profile = new FirefoxProfile();
         FirefoxOptions options = new FirefoxOptions();
+        options.setProfile(profile);
         options.setCapability(CapabilityType.BROWSER_NAME, "firefox");
         return options;
 	    } catch(Exception e) {
@@ -62,6 +102,11 @@ public class DriverOptionsFactory {
     	return null;
     }
 
+    /**
+     * Gets the safari options.
+     *
+     * @return the safari options
+     */
     static SafariOptions getSafariOptions() {
     	try {
     	logger.info("<= In getSafariOptions function =>");
@@ -74,10 +119,21 @@ public class DriverOptionsFactory {
     	return null;
     }
 
+    /**
+     * Gets the internet explorer options.
+     *
+     * @return the internet explorer options
+     */
     static InternetExplorerOptions getInternetExplorerOptions() {
     	try {
     	logger.info("<= In getInternetExplorerOptions function =>");
         InternetExplorerOptions options = new InternetExplorerOptions();
+        options.setCapability("enablePersistentHover", true);
+        options.setCapability("nativeEvents", true);
+        options.setCapability("ignoreProtectedModeSettings", true);
+        options.setCapability("ignoreZoomSetting", true);
+        options.setCapability("requireWindowFocus", true);
+        options.setCapability("ie.ensureCleanSession", true);
         return options;
     	} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
@@ -85,6 +141,11 @@ public class DriverOptionsFactory {
     	return null;
     }
     
+    /**
+     * Gets the edge options.
+     *
+     * @return the edge options
+     */
     static EdgeOptions getEdgeOptions() {
     	try {
     	logger.info("<= In getInternetExplorerOptions function =>");

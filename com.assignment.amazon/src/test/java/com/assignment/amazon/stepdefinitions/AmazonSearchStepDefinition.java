@@ -1,3 +1,8 @@
+/**
+ * @author Vivek Tiwari
+ * 
+ */
+
 package com.assignment.amazon.stepdefinitions;
 
 import java.util.Iterator;
@@ -19,13 +24,31 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+/**
+ * {@summary}
+ * 
+ * The AmazonSearchStepDefinition Class
+ * 
+ * This is a step definition class of amazon login page
+ * feature file implementation @amazon_landing_page.feature
+ * 
+ * @see AmazonSearchStepDefinition
+ * 
+ */
 public class AmazonSearchStepDefinition {
 	
+	/** The Constant logger. */
 	private static final Logger logger = LogManager.getLogger(AmazonSearchStepDefinition.class);
 	
+	/** Private web-driver object */
 	private WebDriver driver = CustomWebDriverManager.getDriver();
+	
+	/** The LandingPage class object. */
 	private final LandingPage landingPage = new LandingPage(driver);
 	
+	/**
+	 * User navigates to amazon page.
+	 */
 	@Given("User navigates to amazon page")
 	public void userNavigatesToAmazonPage() {
 		logger.info("<= In userNavigatesToAmazonPage function => " +Thread.currentThread().getName());
@@ -33,20 +56,33 @@ public class AmazonSearchStepDefinition {
 		
 	}
 	
+	/**
+	 * User selects category value and types product name.
+	 *
+	 * @param dropdownValue - the category drop-down value
+	 * 
+	 * @param productName - the product name to be provided in search box
+	 */
 	@When("User selects {string} from categories dropdown and types {string}")
-	public void userSelectsCategoryValueAndTypesSearchString(String dropdownValue, String searchText) {
-		logger.info("<= In userSelectsCategoryValueAndTypesSearchString function => ");
-		landingPage.selectCategoryFromDropdown(dropdownValue);
-		landingPage.inputTextInSearchBox(searchText);
+	public void userSelectsCategoryValueAndTypesProductName(String dropdownValue, String productName) {
+		logger.info("<= In userSelectsCategoryValueAndTypesProductName function => ");
+		boolean isElementSelected = landingPage.selectCategoryFromDropdown(dropdownValue);
+		Assert.assertTrue(isElementSelected);
+		Assert.assertTrue(landingPage.inputTextInSearchBox(productName));
 	}
 	
+	/**
+	 * User validates auto complete suggestions with product name.
+	 *
+	 * @param productName - the product name
+	 */
 	@Then("User validates auto-complete suggestions align with the provided {string}")
-	public void userValidatesAutoCompleteSuggestionsWithSearchText(String searchText) {
+	public void userValidatesAutoCompleteSuggestionsWithProductName(String productName) {
 		try {
-			logger.info("<= In userValidatesAutoCompleteSuggestionsWithSearchText function => ");
+			logger.info("<= In userValidatesAutoCompleteSuggestionsWithProductName function => ");
 			List<String> list = landingPage.storeAutoCompleteSuggestions();
 			for(String str: list) {
-				if(!str.toLowerCase().contains(searchText.toLowerCase())) {
+				if(!str.toLowerCase().contains(productName.toLowerCase())) {
 					Assert.assertTrue(false);
 				}
 			}
@@ -56,28 +92,48 @@ public class AmazonSearchStepDefinition {
 		}
 	}
 	
+	/**
+	 * User clicks on auto complete suggestion matching productName.
+	 *
+	 * @param productName - the product name
+	 */
 	@Then("User clicks on {string} from auto-complete option thus suggested")
-	public void userClicksOnAutoCompleteSuggestionMatchingSearchText(String searchText) {
-		logger.info("<= In userClicksOnAutoCompleteSuggestionMatchingSearchText function => ");
-		Assert.assertTrue(landingPage.checkForPresenceOfAutoCompleteSuggestion(searchText));
-		WebDriverUtilities.clickOnWebElement(landingPage.returnElementMatchingAutoSuggestedText(searchText));
+	public void userClicksOnAutoCompleteSuggestionMatchingProductName(String productName) {
+		logger.info("<= In userClicksOnAutoCompleteSuggestionMatchingProductName function => ");
+		Assert.assertTrue(landingPage.checkForPresenceOfAutoCompleteSuggestion(productName));
+		WebDriverUtilities.clickOnWebElement(landingPage.returnElementMatchingAutoSuggestedText(productName));
 		
 	}
 	
+	/**
+	 * User validates presence of product results for the searched product.
+	 *
+	 * @param productName - the product name
+	 */
 	@And("User validates that {string} search returns products catalog list")
-	public void userValidatesPresenceOfProductResultsForTheSearchedProduct(String searchText) {
+	public void userValidatesPresenceOfProductResultsForTheSearchedProduct(String productName) {
 		logger.info("<= In userValidatesPresenceOfProductResultsForTheSearchedProduct function => ");
-		Assert.assertTrue(landingPage.storeResultsCatalogElementsText(searchText).size()>0);
+		Assert.assertTrue(landingPage.storeResultsCatalogElementsText(productName).size()>0);
 	}
 	
+	/**
+	 * User clicks on the product from resulting product catalog list.
+	 *
+	 * @param productName - the product name
+	 */
 	@Then("User clicks on the {string} product from resulting product-catalog list")
-	public void userClicksOnTheProductFromResultingProductCatalogList(String searchText) {
+	public void userClicksOnTheProductFromResultingProductCatalogList(String productName) {
 		logger.info("<= In userClicksOnTheProductFromResultingProductCatalogList function => ");
-		landingPage.clickOnFirstResultFromResultsCatalog(searchText);
+		Assert.assertTrue(landingPage.clickOnFirstResultFromResultsCatalog(productName));
 	}
 	
+	/**
+	 * User validates that product specification page opens in new tab.
+	 *
+	 * @param productName - the product name
+	 */
 	@And("User validates that {string} specification page opens in new tab")
-	public void userValidatesThatProductSpecificationPageOpensInNewTab(String searchText) {
+	public void userValidatesThatProductSpecificationPageOpensInNewTab(String productName) {
 		try {
 			logger.info("<= In userValidatesThatProductSpecificationPageOpensInNewTab function => ");
 			Set<String> set = WebDriverUtilities.getWindowHandles();
@@ -86,7 +142,7 @@ public class AmazonSearchStepDefinition {
 			String parentWindowHandle = itr.next();
 			String childWindowHandle = itr.next();
 			CustomWebDriverManager.setDriver(WebDriverUtilities.switchToWindowHandle(childWindowHandle));
-			Assert.assertTrue(landingPage.getProductNameFromTitle().toLowerCase().contains(searchText.toLowerCase()));
+			Assert.assertTrue(landingPage.getProductNameFromTitle().toLowerCase().contains(productName.toLowerCase()));
 			driver.close();
 			CustomWebDriverManager.setDriver(WebDriverUtilities.switchToWindowHandle(parentWindowHandle));
 		} catch(Exception e) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="AmazonTestSuite" parallel="tests">
+<suite name="AmazonTestSuite" parallel="tests" thread-count="10">
   <listeners>
   		<listener class-name="com.assignment.amazon.listeners.AnnotationTransformer"/>
         <listener class-name="com.assignment.amazon.listeners.CustomTestNGListener"/>
@@ -12,6 +12,11 @@
     </classes>
   </test> <!-- Test -->
   <test name="TestAmazonSearchFunctionalityOnSecBrowser">
+    <classes>
+      <class name="com.assignment.amazon.runner.TestRunner"/>
+    </classes>
+  </test>
+  <test name="TestAmazonSearchFunctionalityOnThirdBrowser">
     <classes>
       <class name="com.assignment.amazon.runner.TestRunner"/>
     </classes>

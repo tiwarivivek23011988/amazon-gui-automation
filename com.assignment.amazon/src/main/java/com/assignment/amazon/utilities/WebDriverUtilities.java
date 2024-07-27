@@ -1,3 +1,7 @@
+/**
+ * @author Vivek Tiwari
+ * 
+ */
 package com.assignment.amazon.utilities;
 
 
@@ -28,14 +32,42 @@ import com.assignment.amazon.drivermanager.SafariDriverManager;
 import com.assignment.amazon.exceptions.ExceptionHandler;
 
 
+/**
+ * 
+ * {@summary}
+ * 
+ * The WebDriverUtilities Class
+ * 
+ * This is a utility class for handling all selenium web-driver
+ * related operations and actions.
+ * 
+ * @see WebDriverUtilities
+ * 
+ */
 public final class WebDriverUtilities {
+	
+	/** The Constant logger. */
 	private static final Logger logger = LogManager.getLogger(WebDriverUtilities.class);
+	
+	/** The json parser object */
 	public static JsonParser jsonParser = new JsonParser();
+	
+	/** The file path object */
 	public static String filePath = FileSearchUtility.searchFile("src/test/resources", "data.json");
-	public static HashMap<String, ?> hashMap;
-	public static volatile List<?> browserNames;
+	
+	/** The Constant hashMap reference */
+	public static final HashMap<String, ?> hashMap;
+	
+	/** The list of browser names reference. */
+	public static List<?> browserNames;
+	
+	/** The Constant thread-local browserName. */
 	public static final ThreadLocal<String> browserName;
+	
+	/** The Constant thread-local browserVersion. */
 	public static final ThreadLocal<String> browserVersion;
+	
+	/** Static block initialization of object references.*/
 	static {
 		jsonParser = new JsonParser();
 		filePath = FileSearchUtility.searchFile("src/test/resources", "data.json");
@@ -45,52 +77,79 @@ public final class WebDriverUtilities {
 		browserVersion=new ThreadLocal<>();
 	}
 	
+	/**
+	 * This function fetches browser name based on thread local
+	 * implemented counter.
+	 */
 	public static synchronized void browserCounter() {
 		try {
 		logger.info("<= In browserCounter method => " +Thread.currentThread().getName());
 		int counter = ParallelCounter.getCounter();
 		if(counter < WebDriverUtilities.browserNames.size()) {
 			browserName.set((String) WebDriverUtilities.browserNames.get(counter));
-			logger.info("Counter Value Is => " +counter);
-			logger.info("Browser Name Is => " +browserName.get());
+			System.out.println("Counter Value Is => " +counter);
+			System.out.println("Browser Name Is => " +browserName.get());
 			ParallelCounter.incrementCounter();
 		} else {
 			ParallelCounter.resetCounter();
-			browserName.set((String) WebDriverUtilities.browserNames.get(ParallelCounter.getCounter()));
+			browserCounter();
 		}
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
 	}
 	
+	/**
+	 * Decrement counter.
+	 *
+	 * @return the integer value
+	 */
 	public static synchronized int decrementCounter() {
 		logger.info("<== In decrementCounter method ==>");
 		return ParallelCounter.decrementCounter();
 	}
 	
+	/**
+	 * Gets the counter.
+	 *
+	 * @return the counter
+	 */
 	public static synchronized int getCounter() {	
 		logger.info("<== In getCounter method ==>");
 		return ParallelCounter.getCounter();
 	}
 	
+	/**
+	 * Gets the scenario counter.
+	 *
+	 * @return the scenario counter
+	 */
 	public static synchronized int getScenarioCounter() {
 		logger.info("<== In getScenarioCounter method ==>");
 		return ParallelCounter.scenarioCounter.get();
 	}
 	
+	/**
+	 * Reset counter.
+	 */
 	public static synchronized void resetCounter() {
 		logger.info("<== In resetCounter method ==>");
 		ParallelCounter.resetCounter();
 	}
 	
+	/**
+	 * Gets the web-driver object.
+	 *
+	 * @return the driver
+	 */
 	public synchronized WebDriver getDriver() {
 		try {
 			logger.info("<= In getDriver method => " +Thread.currentThread().getName());
 			String runType=hashMap.get("runType").toString().toLowerCase();
 			logger.info("<= runType value is => " + runType);
 			WebDriver driver=switch(runType) {
-			case "local" -> {
-				yield switch(browserName.get()) {
+			case "local" -> 
+				switch(browserName.get()) {
 					case "chrome" -> new ChromeDriverManager().getDriver();
 					case "firefox" -> new FirefoxDriverManager().getDriver();
 					case "edge" -> new EdgeDriverManager().getDriver();
@@ -98,10 +157,13 @@ public final class WebDriverUtilities {
 					case "explorer" -> new InternetExplorerDriverManager().getDriver();
 					default -> throw new IllegalArgumentException("Browser type not supported: " + browserName.get());
 					};
-				}
-			case "remote" -> {yield new RemoteDriverManager().getDriver();}
+				
+			case "remote" -> new RemoteDriverManager().getDriver();
 			default -> throw new IllegalArgumentException("Unexpected value: " + hashMap.get("runType").toString().toLowerCase());
 			};
+			/**
+			 *  This is required for firefox due to existing compatibility issues with latest version of firefox
+			 */
 			return driver;
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
@@ -109,6 +171,11 @@ public final class WebDriverUtilities {
 		return null;
 	}
 	
+	/**
+	 * Wait for element to be visible.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void waitForElementToBeVisible(WebElement element) {
 		try {
 		logger.info("<== In waitForElementToBeVisible method ==>");
@@ -119,6 +186,11 @@ public final class WebDriverUtilities {
 		}
 	}
 	
+	/**
+	 * Wait for element to be clickable.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void waitForElementToBeClickable(WebElement element) {
 		try {
 		logger.info("<== In waitForElementToBeClickable method ==>");
@@ -129,6 +201,11 @@ public final class WebDriverUtilities {
 		}
 	}
 	
+	/**
+	 * Wait until visibility of all elements located.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void waitUntilVisibilityOfAllElementsLocated(List<WebElement> element) {
 		try {
 		logger.info("<== In waitUntilVisibilityOfAllElementsLocated method ==>");
@@ -139,6 +216,11 @@ public final class WebDriverUtilities {
 		}
 	}
 	
+	/**
+	 * Click on web element.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void clickOnWebElement(WebElement element) {
 		try {
 		logger.info("<== In clickOnWebElement method ==>");
@@ -149,6 +231,11 @@ public final class WebDriverUtilities {
 		}
 	}
 	
+	/**
+	 * Gets the window handles.
+	 *
+	 * @return the window handles
+	 */
 	public static Set<String> getWindowHandles() {
 		try {
 		logger.info("<== In getWindowHandles method ==>");
@@ -160,6 +247,12 @@ public final class WebDriverUtilities {
 		return null;
 	}
 	
+	/**
+	 * Switch to window handle.
+	 *
+	 * @param handleId - the browser handle id
+	 * @return the web driver
+	 */
 	public static WebDriver switchToWindowHandle(String handleId) {
 		try {
 		logger.info("<== In switchToWindowHandle method ==>");
@@ -171,6 +264,11 @@ public final class WebDriverUtilities {
 		return null;
 	}
 	
+	/**
+	 * Wait for element visibility using fluent wait.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void waitForElementVisibilityUsingFluentWait(WebElement element) {
 		try {
 		logger.info("<== In waitForElementVisibilityUsingFluentWait method ==>");
@@ -187,6 +285,11 @@ public final class WebDriverUtilities {
 
 	}
 	
+	/**
+	 * Wait for element clickability using fluent wait.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void waitForElementClickabilityUsingFluentWait(WebElement element) {
 		try {
 		logger.info("<== In waitForElementClickabilityUsingFluentWait method ==>");
@@ -202,6 +305,11 @@ public final class WebDriverUtilities {
 		}
 	}
 	
+	/**
+	 * Wait for all ajax calls to complete using fluent wait.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void waitForAllAjaxCallsToCompleteUsingFluentWait(WebElement element) {
 		try {
 		logger.info("<== In waitForAllAjaxCallsToCompleteUsingFluentWait method ==>");
@@ -215,6 +323,11 @@ public final class WebDriverUtilities {
 		}
 	}
 	
+	/**
+	 * Wait for elements visibility using fluent wait.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void waitForElementsVisibilityUsingFluentWait(List<WebElement> element) {
 		try {
 		logger.info("<== In waitForElementsVisibilityUsingFluentWait method ==>");
@@ -230,6 +343,11 @@ public final class WebDriverUtilities {
 
 	}
 	
+	/**
+	 * Scroll to view.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void scrollToView(WebElement element) {
 		try {
 		logger.info("<== In scrollToView method ==>");
@@ -239,6 +357,11 @@ public final class WebDriverUtilities {
 		}
 	}
 	
+	/**
+	 * Scroll to view and click.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void scrollToViewAndClick(WebElement element) {
 		try {
 		logger.info("<== In scrollToViewAndClick method ==>");
@@ -249,6 +372,9 @@ public final class WebDriverUtilities {
 		}
 	}
 	
+	/**
+	 * Maximize browser window.
+	 */
 	public static void maximizeBrowserWindow() {
 		try {
 		logger.info("<== In maximizeBrowserWindow method ==>");
@@ -258,16 +384,26 @@ public final class WebDriverUtilities {
 		}
 	}
 	
+	/**
+	 * Move to element and perform element click using actions.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void moveToElementAndPerformElementClickUsingActions(WebElement element) {
 		try {
 		logger.info("<== In moveToElementAndPerformElementClickUsingActions method ==>");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
-		actions.moveToElement(element).click().perform();
+		actions.click(element).perform();
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
 	}
 	
+	/**
+	 * Scroll to element and perform element click using actions class.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void scrollToElementAndPerformElementClickUsingActions(WebElement element) {
 		try {
 		logger.info("<== In scrollToElementAndPerformElementClickUsingActions method ==>");
@@ -278,6 +414,26 @@ public final class WebDriverUtilities {
 		}
 	}
 	
+	/**
+	 * Perform element click and hold using actions.
+	 *
+	 * @param element - the web-element
+	 */
+	public static void performElementClickAndHoldUsingActions(WebElement element) {
+		try {
+		logger.info("<== In scrollToElementAndPerformElementClickUsingActions method ==>");
+		Actions actions = new Actions(CustomWebDriverManager.getDriver());
+		actions.clickAndHold(element).perform();
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+		}
+	}
+	
+	/**
+	 * Perform java script click.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void performJavaScriptClick(WebElement element) {
 		try {
 		logger.info("<== In performJavaScriptClick method ==>");
@@ -287,6 +443,11 @@ public final class WebDriverUtilities {
 		}
 	}
 	
+	/**
+	 * Scroll to element height.
+	 *
+	 * @param element - the web-element
+	 */
 	public static void scrollToElementHeight(WebElement element) {
 		try {
 		logger.info("<== In scrollToElementHeight method ==>");
@@ -298,6 +459,9 @@ public final class WebDriverUtilities {
 		}
 	}
 	
+	/**
+	 * Sets the browser size.
+	 */
 	public static void setBrowserSize() {
 		try {
 		logger.info("<== In setBrowserSize method ==>");
@@ -305,5 +469,13 @@ public final class WebDriverUtilities {
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
+	}
+	
+	/**
+	 * Zoom out browser window.
+	 */
+	public static void zoomOutBrowserWindow() {
+		JavascriptExecutor js = (JavascriptExecutor) CustomWebDriverManager.getDriver();
+		js.executeScript("document.body.style.transform = 'scale(0.5)'");
 	}
 }

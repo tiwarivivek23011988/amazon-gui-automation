@@ -1,3 +1,7 @@
+/**
+ * @author Vivek Tiwari
+ *  
+ */
 package com.assignment.amazon.utilities;
 
 import java.nio.file.Files;
@@ -12,10 +16,27 @@ import com.assignment.amazon.exceptions.ExceptionHandler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * {@summary}
+ * 
+ * The JsonParser Class
+ * 
+ * This is a utility class used to parse any json data or
+ * configuration file.
+ * 
+ * @see JsonParser
+ */
 public class JsonParser {
 	
+	/** The Constant logger. */
 	private static final Logger logger = LogManager.getLogger(JsonParser.class);
 	
+	/**
+	 * Parses the json data/configuration file.
+	 *
+	 * @param filePath - the file path
+	 * @return the hash map
+	 */
 	public HashMap<String, ?> parseJson(String filePath) {
 		HashMap<String,?> map = null;
 		try {

@@ -1,20 +1,45 @@
+/**
+ * @author Vivek Tiwari
+ * 
+ */
+
 package com.assignment.amazon.listeners;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.IExecutionListener;
 
+/**
+ * {@summary}
+ * 
+ * The CustomExecutionListener class
+ * 
+ * The listener interface for receiving execution events.
+ * The class that is interested in processing a customExecution
+ * event implements TestNG provided @IExecutionListener. When
+ * the customExecution event occurs, CustomExecutionListener 
+ * object's appropriate method is invoked.
+ *
+ * @see CustomExecutionListener
+ */
 public class CustomExecutionListener implements IExecutionListener{
 	  
-	  private static final Logger logger = LogManager.getLogger(CustomExecutionListener.class);
+	/** The Constant logger. */
+  	private static final Logger logger = LogManager.getLogger(CustomExecutionListener.class);
 
-	  @Override
+	/**
+  	 * On execution start.
+  	 */
+  	@Override
 	  public void onExecutionStart() {
 		logger.info("<= In onExecutionStart function =>");
 	    CustomTestNGListener.createInstance();
 	  }
 
-	  @Override
+	/**
+  	 * On execution finish.
+  	 */
+  	@Override
 	  public void onExecutionFinish() {
 		logger.info("<= onExecutionFinish function =>");
 		CustomTestNGListener.extentReportPreProcessing();

@@ -1,3 +1,7 @@
+/**
+ * @author Vivek Tiwari
+ * 
+ */
 package com.assignment.amazon.listeners;
 
 import java.io.FileInputStream;
@@ -30,12 +34,38 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 
+/**
+ * {@summary}
+ * 
+ * The CustomTestNGListener Class
+ * 
+ * The listener interface for receiving testNG events.
+ * The class that is interested in processing testNG
+ * event implements testNG provided @ITestListener interface. 
+ * When the testNG event occurs, CustomTestNGListener object's 
+ * appropriate method is invoked.
+ *
+ * @see CustomTestNGListener
+ */
 public class CustomTestNGListener implements ITestListener {
+	
+	/** The Constant logger. */
 	private static final Logger logger = LogManager.getLogger(CustomTestNGListener.class);
+    
+    /** The extent. */
     public static ExtentReports extent;
+    
+    /** The spark reporter. */
     private static ExtentSparkReporter sparkReporter;
+    
+    /** The extent test. */
     static volatile ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>();
     
+    /**
+     * Creates the instance of extent reports
+     *
+     * @return - the extent reports
+     */
     public static synchronized ExtentReports createInstance() {
     	logger.info("<= In createInstance function =>");
     	try {
@@ -56,23 +86,43 @@ public class CustomTestNGListener implements ITestListener {
         return extent;
     }
     
+    /**
+     * Gets the single instance of CustomTestNGListener.
+     *
+     * @return single instance of CustomTestNGListener
+     */
     public synchronized static ExtentReports getInstance() {
     	logger.info("<= In getInstance function =>");
         return extent;
     }
 
+    /**
+     * On test start.
+     *
+     * @param result - the result
+     */
     @Override
     public synchronized void onTestStart(ITestResult result) {
     	logger.info("Test Case started!");
     	logger.info("<= In onTestStart function =>");
     }
 
+    /**
+     * On test success.
+     *
+     * @param result - the result
+     */
     @Override
     public synchronized void onTestSuccess(ITestResult result) {
     	logger.info("<= In onTestSuccess function =>");
        extentTest.get().log(Status.PASS, "Test Passed");
     }
     
+    /**
+     * On test failure.
+     *
+     * @param result - the result
+     */
     @Override
     public synchronized void onTestFailure(ITestResult result) {
        logger.info("<= In onTestFailure function =>");
@@ -80,12 +130,20 @@ public class CustomTestNGListener implements ITestListener {
        extentTest.get().log(Status.FAIL, result.getThrowable());
     }
 
+    /**
+     * On test skipped.
+     *
+     * @param result - the result
+     */
     @Override
     public synchronized void onTestSkipped(ITestResult result) {
       logger.info("<= In onTestSkipped function =>");
       extentTest.get().log(Status.SKIP, "Test Skipped");
     }
     
+    /**
+     * Extent report pre-processing function.
+     */
     public static synchronized void extentReportPreProcessing() {
         logger.info("<= In extentReportPreProcessing function =>");
     	
@@ -93,15 +151,21 @@ public class CustomTestNGListener implements ITestListener {
 
         try {
            
-                // Create a DocumentBuilderFactory instance
+                /**
+                 * Create a DocumentBuilderFactory instance
+                 */
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 factory.setValidating(false); // Disable validation
                 factory.setNamespaceAware(true);
 
-                // Create a DocumentBuilder instance
+                /**
+                 * Create a DocumentBuilder instance
+                 */
                 DocumentBuilder builder = factory.newDocumentBuilder();
 
-                // Set a custom EntityResolver to skip DTD validation
+                /**
+                 *  Set a custom EntityResolver to skip DTD validation
+                 */
                 builder.setEntityResolver(new EntityResolver() {
                     @Override
                     public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
@@ -110,20 +174,29 @@ public class CustomTestNGListener implements ITestListener {
                     }
                 });
 
-                // Parse the jacoco.xml file into a Document
+                /**
+                 *  Parse the jacoco.xml file into a Document
+                 */
                 FileInputStream inputStream = new FileInputStream(FileSearchUtility.searchFile("temp", "jacoco.xml"));
                 Document doc = builder.parse(inputStream);
 
 
-                // Now you have the Document object, you can work with it as needed
-                // For example, you can print the root element
-                System.out.println("Root element: " + doc.getDocumentElement().getNodeName());
+                /**
+                 * Now you have the Document object, you can work with it as needed.
+                 * 
+                 * For example, you can print the root element.
+                 */
+                logger.info("Root element: " + doc.getDocumentElement().getNodeName());
 
             
-            // Extract and log coverage information
+            /**
+             * Extract and log coverage information
+             */
             extractAndLogCoverageInfo(doc, test);
             
-            // Close the input stream
+            /**
+             * Close the input stream
+             */
             inputStream.close();
 
         } catch (Exception e) {
@@ -133,6 +206,12 @@ public class CustomTestNGListener implements ITestListener {
         extent.flush();
     }
     
+    /**
+     * Extract and log coverage info.
+     *
+     * @param doc - the document
+     * @param test - the test
+     */
     private synchronized static void extractAndLogCoverageInfo(Document doc, ExtentTest test) {
         try {
         CustomTestNGListener.logger.info("<= In extractAndLogCoverageInfo function =>");

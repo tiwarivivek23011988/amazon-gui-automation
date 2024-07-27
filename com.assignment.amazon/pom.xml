@@ -111,6 +111,26 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
+      <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.4.0</version> <!-- Use the latest version available -->
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>javadoc</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <source>15</source> <!-- Specify the Java version you are using -->
+                <encoding>UTF-8</encoding>
+                <additionalJOptions>
+                    <option>-docletpath</option>
+                    <option>${project.build.outputDirectory}</option>
+                </additionalJOptions>
+            </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
