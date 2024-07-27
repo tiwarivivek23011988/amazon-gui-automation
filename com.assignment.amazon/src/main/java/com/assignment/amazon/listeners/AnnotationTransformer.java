@@ -19,8 +19,7 @@ import org.testng.annotations.ITestAnnotation;
  * 
  * The AnnotationTransformer Class
  * 
- * This is a custom implementation of TestNG provided listener
- * @IAnotationTransformer
+ * This is a custom implementation of TestNG provided listener IAnotationTransformer
  * 
  * @see AnnotationTransformer
  * 

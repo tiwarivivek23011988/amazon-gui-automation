@@ -32,7 +32,7 @@ import io.cucumber.plugin.event.TestStepStarted;
  * 
  * The listener interface for receiving cucumber events.
  * The class that is interested in processing a customCucumber
- * event implements cucumber provided @ConcurrentEventListener interface. 
+ * event implements cucumber provided ConcurrentEventListener interface. 
  * When the customCucumber event occurs, CustomCucumberListener object's 
  * appropriate method is invoked.
  *

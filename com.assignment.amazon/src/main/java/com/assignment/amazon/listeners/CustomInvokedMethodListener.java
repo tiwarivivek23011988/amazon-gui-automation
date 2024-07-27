@@ -18,7 +18,7 @@ import org.testng.ITestResult;
  * 
  * The listener interface for receiving InvokedMethod events.
  * The class that is interested in processing a customInvokedMethod
- * event implements @IInvokedMethodListener. When
+ * event implements IInvokedMethodListener. When
  * the customInvokedMethod event occurs, CustomInvokedMethodListener 
  * object's appropriate method is invoked.
  *

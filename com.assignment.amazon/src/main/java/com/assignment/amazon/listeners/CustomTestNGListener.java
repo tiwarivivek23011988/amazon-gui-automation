@@ -41,7 +41,7 @@ import com.aventstack.extentreports.reporter.configuration.Theme;
  * 
  * The listener interface for receiving testNG events.
  * The class that is interested in processing testNG
- * event implements testNG provided @ITestListener interface. 
+ * event implements testNG provided ITestListener interface. 
  * When the testNG event occurs, CustomTestNGListener object's 
  * appropriate method is invoked.
  *

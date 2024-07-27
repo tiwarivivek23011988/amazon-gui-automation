@@ -16,7 +16,7 @@ import org.testng.IExecutionListener;
  * 
  * The listener interface for receiving execution events.
  * The class that is interested in processing a customExecution
- * event implements TestNG provided @IExecutionListener. When
+ * event implements TestNG provided IExecutionListener. When
  * the customExecution event occurs, CustomExecutionListener 
  * object's appropriate method is invoked.
  *

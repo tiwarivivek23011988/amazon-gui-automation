@@ -18,7 +18,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
  * 
  * This class provides firefox driver handling functions.
  * 
- * @see FireforDriverManager
+ * @see FirefoxDriverManager
  * 
  */
 

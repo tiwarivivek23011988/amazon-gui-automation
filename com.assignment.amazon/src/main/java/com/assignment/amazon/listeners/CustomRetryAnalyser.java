@@ -18,7 +18,7 @@ import org.testng.ITestResult;
  * 
  * The listener interface for receiving test retry events.
  * The class that is interested in processing a customInvokedMethod
- * event implements @IRetryAnalyzer. When
+ * event implements IRetryAnalyzer. When
  * the customInvokedMethod event occurs, CustomRetryAnalyser 
  * object's appropriate method is invoked.
  *
