@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -44,27 +45,29 @@ public class LandingPage {
 	}
 	
 	/** The search web element. */
-	@FindBy(xpath = "//div[@id='nav-search-dropdown-card']//select/option")
+	@FindBy(xpath = "//div[@id='nav-search-dropdown-card']//child::select[@id='searchDropdownBox']/option")
 	List<WebElement> searchWebElement;
 	
-	/** The category drop-down by id. */
-	@FindBy(id = "searchDropdownBox")
-	WebElement categoryDropDownById;
+	/**Category drop down selected text web-element */
+	@FindBy(id="nav-search-label-id")
+	WebElement categoryTextToVerify;
 	
-	/** The category drop-down by X path. */
-	@FindBy(xpath = "//div[@id='nav-search']/form[@id='nav-search-bar-form']/div[@class='nav-left']/div")
-	WebElement categoryDropDownByXPath;
+	/** The overlay element */
+	@FindBy(xpath="//*[@id='gw-desktop-herotator']/div/div")
+	WebElement overLayElement;
+	
+	/** The category drop-down by id. */
+	@FindBy(id = "nav-search-dropdown-card")
+	WebElement categoryDropDownById;
 	
 	/** The search text box. */
 	@FindBy(id="twotabsearchtextbox")
 	WebElement searchBox;
 	
-	/** The auto-complete suggestions. */
 	@FindBy(xpath="//div[contains(@id,'nav-flyout-searchAjax')]/descendant::div[@role='button']")
 	List<WebElement> autoCompleteSuggestions;
 	
-	/** The search text box ajax location. */
-	@FindBy(id="//div[contains(@id,'nav-flyout-searchAjax')]")
+	@FindBy(id="//div[contains(@id,'nav-flyout-searchAjax')]/div[@class='autocomplete-results-container']")
 	WebElement searchBoxAjax;
 	
 	/** The searched product list. */
@@ -97,18 +100,27 @@ public class LandingPage {
 	public boolean selectCategoryFromDropdown(String dropDownValue) {
 		try {
 		logger.info("<= In selectCategoryFromDropdown function =>");
-		WebDriverUtilities.waitForElementClickabilityUsingFluentWait(categoryDropDownByXPath);
-		WebDriverUtilities.scrollToView(categoryDropDownByXPath);
-		WebDriverUtilities.moveToElementAndPerformElementClickUsingActions(categoryDropDownByXPath);
+		WebDriverUtilities.scrollToView(categoryDropDownById);
+		WebDriverUtilities.moveToElementAndPerformElementClickUsingActions(categoryDropDownById);
 		WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(categoryDropDownById);
 		WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(searchWebElement);
-		 for(WebElement element: searchWebElement) {
-		 WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
-		 if(element.getText().equalsIgnoreCase(dropDownValue)) {
-			 WebDriverUtilities.performJavaScriptClick(element);
-			 return true; 
-		 	} 
-		 }
+		int index=0;
+		for(WebElement element: searchWebElement) {
+		WebDriverUtilities.scrollToView(element);
+		WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
+		if(element.getText().equals(dropDownValue)) {
+			WebDriverUtilities.selectByIndexUsingJavascript(categoryDropDownById, index);
+			System.out.println("Index is => " +index);
+			WebDriverUtilities.scrollToView(categoryTextToVerify);
+			WebDriverUtilities.waitForElementVisibilityUsingFluentWait(categoryTextToVerify);
+			if(categoryTextToVerify.getText().equals(dropDownValue)) {
+				return true;
+			}
+		} else {
+			WebDriverUtilities.keyPressEventUsingActionsClickAndHold(Keys.DOWN);
+		}
+		index++;
+		}
 	  } catch(Exception e) {
 		  ExceptionHandler.throwsException(e);
 		  return false;
@@ -125,9 +137,9 @@ public class LandingPage {
 	public boolean inputTextInSearchBox(String inputText) {
 	try {
 		logger.info("<= In inputTextInSearchBox function =>");
-		WebDriverUtilities.waitForElementClickabilityUsingFluentWait(searchBox);
+		WebDriverUtilities.waitForElementVisibilityUsingFluentWait(searchBox);
+		WebDriverUtilities.scrollToView(searchBox);
 		searchBox.clear();
-		WebDriverUtilities.clickOnWebElement(searchBox);
 		searchBox.sendKeys(inputText);
 		return true;
 	 } catch(Exception e) {
@@ -137,23 +149,32 @@ public class LandingPage {
 	}
 	
 	/**
-	 * Store auto complete suggestions.
+	 * check auto complete suggestions.
 	 *
 	 * @return - the list
 	 */
-	public List<String> storeAutoCompleteSuggestions() {
+	public boolean checkAutoCompleteSuggestions(String productName) {
 		try {
 			logger.info("<= In storeAutoCompleteSuggestions function =>");
-			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
+			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBox);
 			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
-			for(WebElement element: autoCompleteSuggestions) {
-				 WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
+			for(WebElement element:autoCompleteSuggestions) {
+				WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
+				WebDriverUtilities.moveToElementUsingActions(element);
+				String attributeTextFromAutoCompleteSearchBox=element.getAttribute("aria-label").toString();
+				if(attributeTextFromAutoCompleteSearchBox.length()==productName.length()) {
+					if(!attributeTextFromAutoCompleteSearchBox.equalsIgnoreCase(productName)) {
+						return false;
+					}
+				}else if(!attributeTextFromAutoCompleteSearchBox.toLowerCase().contains(productName.toLowerCase())) {
+					return false;
+				}
 			}
-			return autoCompleteSuggestions.stream().map(x -> x.getText()).collect(Collectors.toList());
+			return true;
 		 } catch(Exception e) {
 			  ExceptionHandler.throwsException(e);
 		 }
-		return null;
+		return false;
 	}
 	
 	/**
@@ -165,7 +186,7 @@ public class LandingPage {
 	public WebElement returnElementMatchingAutoSuggestedText(String inputText) {
 		try {
 			logger.info("<= In returnElementMatchingAutoSuggestedText function =>");
-			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
+			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBox);
 			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 			for(WebElement element: autoCompleteSuggestions) {
 				 if(element.getText().equalsIgnoreCase(inputText.toLowerCase()) ||

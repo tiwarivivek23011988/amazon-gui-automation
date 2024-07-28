@@ -36,13 +36,13 @@ public class Setup {
 	 * driver initializations.
 	 */
 	@Before
-	public void setUp() {
+	public synchronized void setUp() {
 		logger.info("<= In setUp Function =>");
 		
 		try {
 		
 		if(WebDriverUtilities.hashMap.get("runType").toString().equalsIgnoreCase("local")) {
-			
+						
 			switch(WebDriverUtilities.browserName.get()) {
 				case "chrome" -> {
 					WebDriverManager.chromedriver().clearDriverCache().setup();
@@ -66,15 +66,7 @@ public class Setup {
 		
 		CustomWebDriverManager.setDriver(driverManager.getDriver());
 		
-		/**
-		 * Explicit browser handling since some firefox browser version has compatibility issues
-		 */
-		if(WebDriverUtilities.browserName.get().equalsIgnoreCase("firefox")) {
-			WebDriverUtilities.setBrowserSize();
-			WebDriverUtilities.zoomOutBrowserWindow();
-		} else {
-			WebDriverUtilities.maximizeBrowserWindow();
-		}
+		WebDriverUtilities.maximizeBrowserWindow();
 		
 		logger.info("Scenario Counter Value In Before Hook Is => " +WebDriverUtilities.getScenarioCounter());
 
@@ -91,7 +83,7 @@ public class Setup {
 	 * browser driver instances.
 	 */
 	@After
-	public void tearDown() {
+	public synchronized void tearDown() {
 		try {
 		 logger.info("<= In tearDown Function =>");
 		 CustomWebDriverManager.getDriver().manage().deleteAllCookies();

@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -225,6 +226,7 @@ public final class WebDriverUtilities {
 		try {
 		logger.info("<== In clickOnWebElement method ==>");
 		waitForElementToBeClickable(element);
+		scrollToView(element);
 		element.click();
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
@@ -366,7 +368,7 @@ public final class WebDriverUtilities {
 		try {
 		logger.info("<== In scrollToViewAndClick method ==>");
 		//Smooth Scrolling
-		((JavascriptExecutor) CustomWebDriverManager.getDriver()).executeScript("arguments[0].scrollIntoView({ behavior: 'smooth', block: 'center' }); arguments[0].click();", element);
+		((JavascriptExecutor) CustomWebDriverManager.getDriver()).executeScript("arguments[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center'}); arguments[0].click();", element);
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
@@ -393,7 +395,7 @@ public final class WebDriverUtilities {
 		try {
 		logger.info("<== In moveToElementAndPerformElementClickUsingActions method ==>");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
-		actions.click(element).perform();
+		actions.moveToElement(element).click().perform();
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
@@ -452,7 +454,7 @@ public final class WebDriverUtilities {
 		try {
 		logger.info("<== In scrollToElementHeight method ==>");
 		((JavascriptExecutor) CustomWebDriverManager.getDriver()).executeScript(
-	            "arguments[0].scrollTop = arguments[0].scrollHeight;",
+	            "arguments[0].scrollDown = arguments[0].scrollHeight;",
 	            element);
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
@@ -465,7 +467,7 @@ public final class WebDriverUtilities {
 	public static void setBrowserSize() {
 		try {
 		logger.info("<== In setBrowserSize method ==>");
-		CustomWebDriverManager.getDriver().manage().window().setSize(new Dimension(768, 1024));
+		CustomWebDriverManager.getDriver().manage().window().setSize(new Dimension(1200, 1200));
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
@@ -476,6 +478,46 @@ public final class WebDriverUtilities {
 	 */
 	public static void zoomOutBrowserWindow() {
 		JavascriptExecutor js = (JavascriptExecutor) CustomWebDriverManager.getDriver();
-		js.executeScript("document.body.style.transform = 'scale(0.5)'");
+		js.executeScript("document.body.style.transform = 'scale(0.5)';");
+	}
+	
+	public static boolean waitForCssTransitionsToComplete(WebElement element) {
+		JavascriptExecutor js = (JavascriptExecutor) CustomWebDriverManager.getDriver();
+		Boolean animationComplete = (Boolean) js.executeScript("return window.getComputedStyle(arguments[0]).animationName !== 'none';", element);
+		return animationComplete;
+	}
+	
+	public static void waitUntilTextToBePresentInElementLocated(WebElement element, String text) {
+		try {
+			logger.info("<== In waitForElementsVisibilityUsingFluentWait method ==>");
+			Wait<WebDriver> wait = new FluentWait<>(CustomWebDriverManager.getDriver())
+	                .withTimeout(Duration.ofSeconds(30))
+	                .pollingEvery(Duration.ofSeconds(1))
+	                .ignoring(Exception.class);
+
+	        wait.until(ExpectedConditions.textToBePresentInElement(element, text));
+			} catch(Exception e) {
+				ExceptionHandler.throwsException(e);
+			}
+		
+	}
+	
+	public static void keyPressEventUsingActionsClickAndHold(Keys key) {
+		Actions actions = new Actions(CustomWebDriverManager.getDriver());
+		actions.keyDown(key).clickAndHold().build().perform();
+	}
+	
+	public static void moveToElementUsingActions(WebElement element) {
+		Actions actions = new Actions(CustomWebDriverManager.getDriver());
+		actions.moveToElement(element).build().perform();
+	}
+	
+	public static void clickAndHoldUsingActions(WebElement element) {
+		Actions actions = new Actions(CustomWebDriverManager.getDriver());
+		actions.clickAndHold(element).build().perform();
+	}
+	
+	public static void selectByIndexUsingJavascript(WebElement element, int index) {
+		((JavascriptExecutor) CustomWebDriverManager.getDriver()).executeScript(String.format("arguments[0].selectedIndex = %d;",index), element);
 	}
 }

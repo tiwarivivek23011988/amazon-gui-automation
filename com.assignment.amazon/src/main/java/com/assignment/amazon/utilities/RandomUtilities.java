@@ -55,6 +55,16 @@ public class RandomUtilities {
 	}
 	
 	/**
+	 * Gets the users current directory.
+	 *
+	 * @return the users current directory
+	 */
+	public static String getUserCurrentDirectory() {
+		logger.info("<= In getUserCurrentDirectory function =>");
+		return System.getProperty("user.dir");
+	}
+	
+	/**
 	 * Gets the operating system name.
 	 *
 	 * @return the operating system name

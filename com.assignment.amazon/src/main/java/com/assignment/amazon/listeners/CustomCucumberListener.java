@@ -49,7 +49,7 @@ public class CustomCucumberListener implements ConcurrentEventListener {
      * @param publisher - the new event publisher
      */
     @Override
-    public void setEventPublisher(EventPublisher publisher) {
+    public synchronized void setEventPublisher(EventPublisher publisher) {
     	logger.info("<= In setEventPublisher function =>");
         publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
         publisher.registerHandlerFor(TestStepStarted.class, this::handleTestStepStarted);
@@ -87,7 +87,7 @@ public class CustomCucumberListener implements ConcurrentEventListener {
      *
      * @param event - the event
      */
-    private void handleTestStepStarted(TestStepStarted event) {
+    private synchronized void handleTestStepStarted(TestStepStarted event) {
     	try {
     	logger.info("<= In handleTestStepStarted Publisher Event =>");
     	if (event.getTestStep() instanceof PickleStepTestStep) {
@@ -105,7 +105,7 @@ public class CustomCucumberListener implements ConcurrentEventListener {
      *
      * @param event - the event
      */
-    private void handleTestStepFinished(TestStepFinished event) {
+    private synchronized void handleTestStepFinished(TestStepFinished event) {
     	try {
     	logger.info("<= In handleTestStepFinished Publisher Event =>");
     	if (event.getTestStep() instanceof PickleStepTestStep) {
@@ -135,7 +135,7 @@ public class CustomCucumberListener implements ConcurrentEventListener {
      *
      * @param event - the event
      */
-    private void handleTestCaseFinished(TestCaseFinished event) {
+    private synchronized void handleTestCaseFinished(TestCaseFinished event) {
     	try {
     	logger.info("<= In handleTestCaseFinished Publisher Event =>");
     	if (event.getResult().getStatus().is(io.cucumber.plugin.event.Status.PASSED)) {

@@ -6,7 +6,6 @@
 package com.assignment.amazon.stepdefinitions;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -44,7 +43,7 @@ public class AmazonSearchStepDefinition {
 	private WebDriver driver = CustomWebDriverManager.getDriver();
 	
 	/** The LandingPage class object. */
-	private final LandingPage landingPage = new LandingPage(driver);
+	private LandingPage landingPage = new LandingPage(driver);
 	
 	/**
 	 * User navigates to amazon page.
@@ -80,13 +79,8 @@ public class AmazonSearchStepDefinition {
 	public void userValidatesAutoCompleteSuggestionsWithProductName(String productName) {
 		try {
 			logger.info("<= In userValidatesAutoCompleteSuggestionsWithProductName function => ");
-			List<String> list = landingPage.storeAutoCompleteSuggestions();
-			for(String str: list) {
-				if(!str.toLowerCase().contains(productName.toLowerCase())) {
-					Assert.assertTrue(false);
-				}
-			}
-			Assert.assertTrue(true);
+			boolean flag = landingPage.checkAutoCompleteSuggestions(productName);
+			Assert.assertTrue(flag);
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
