@@ -40,7 +40,7 @@ public class JsonParser {
 	public HashMap<String, ?> parseJson(String filePath) {
 		HashMap<String,?> map = null;
 		try {
-			logger.info("<= In parseJson function =>");
+			logger.debug("*******In parseJson function*******");
 			Path path = Paths.get(filePath);
 			String jsonStr = Files.readString(path);
 			ObjectMapper obj = new ObjectMapper();

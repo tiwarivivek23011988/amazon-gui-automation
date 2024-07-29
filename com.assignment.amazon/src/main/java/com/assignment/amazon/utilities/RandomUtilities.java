@@ -35,7 +35,7 @@ public class RandomUtilities {
 	 */
 	public static String getHostName() {
 	    try {
-	    	logger.info("<= In getHostName function =>");
+	    	logger.debug("*******In getHostName function*******");
 	        InetAddress inetAddress = InetAddress.getLocalHost();
 	        return inetAddress.getHostName();
 	    } catch (Exception e) {
@@ -50,7 +50,7 @@ public class RandomUtilities {
 	 * @return the user name
 	 */
 	public static String getUserName() {
-		logger.info("<= In getUserName function =>");
+		logger.debug("*******In getUserName function*******");
 		return System.getProperty("user.name");
 	}
 	
@@ -60,7 +60,7 @@ public class RandomUtilities {
 	 * @return the users current directory
 	 */
 	public static String getUserCurrentDirectory() {
-		logger.info("<= In getUserCurrentDirectory function =>");
+		logger.debug("*******In getUserCurrentDirectory function*******");
 		return System.getProperty("user.dir");
 	}
 	
@@ -70,7 +70,7 @@ public class RandomUtilities {
 	 * @return the operating system name
 	 */
 	public static String getOsName() {
-		logger.info("<= In getOsName function =>");
+		logger.debug("*******In getOsName function*******");
 		return System.getProperty("os.name");
 	}
 	
@@ -80,7 +80,7 @@ public class RandomUtilities {
 	 * @return the operating system version
 	 */
 	public static String getOsVersion() {
-		logger.info("<= In getOsVersion function =>");
+		logger.debug("*******In getOsVersion function*******");
 		return System.getProperty("os.version");
 	}
 	
@@ -90,7 +90,7 @@ public class RandomUtilities {
 	 * @return the operating system architecture
 	 */
 	public static String getOsArchitecture() {
-		logger.info("<= In getOsArchitecture function =>");
+		logger.debug("*******In getOsArchitecture function*******");
 		return System.getProperty("os.arch");
 	}
 }

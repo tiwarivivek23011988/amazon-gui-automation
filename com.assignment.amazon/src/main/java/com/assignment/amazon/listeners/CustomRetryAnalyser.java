@@ -44,7 +44,7 @@ public class CustomRetryAnalyser implements IRetryAnalyzer{
      */
     @Override
     public boolean retry(ITestResult result) {
-    	logger.info("<= In retry function =>");
+    	logger.debug("*******In retry function*******");
         if (retryCount < maxRetryCount) {
             retryCount++;
             logger.info("Retrying test " + result.getMethod().getMethodName() + " for the " + retryCount + " time.");

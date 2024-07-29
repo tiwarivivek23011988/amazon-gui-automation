@@ -36,7 +36,7 @@ public class FirefoxDriverManager implements AbstractDriverFunction<WebDriver,Fi
 	
 	@Override
 	public synchronized WebDriver getDriver() {
-		logger.info("<= In getDriver function of FirefoxDriverManager class =>");
+		logger.debug("*******In getDriver function of FirefoxDriverManager class*******");
 		return new FirefoxDriver(getCapabilities());
 	}
 
@@ -49,7 +49,7 @@ public class FirefoxDriverManager implements AbstractDriverFunction<WebDriver,Fi
 	
 	@Override
 	public FirefoxOptions getCapabilities() {
-		logger.info("<= In getCapabilities function of FirefoxDriverManager class =>");
+		logger.debug("*******In getCapabilities function of FirefoxDriverManager class*******");
 		return DriverOptionsFactory.getFirefoxOptions();
 	}
 

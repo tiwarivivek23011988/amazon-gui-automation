@@ -40,7 +40,7 @@ public class ParallelCounter {
      * @return integer value
      */
     public static synchronized int incrementCounter() {
-    	logger.info("<= In incrementCounter function of ParallelCounter class =>");
+    	logger.debug("*******In incrementCounter function of ParallelCounter class*******");
         return counter.incrementAndGet();
     }
     
@@ -50,7 +50,7 @@ public class ParallelCounter {
      * @return integer value
      */
     public static synchronized int decrementCounter() {
-    	logger.info("<= In decrementCounter function of ParallelCounter class =>");
+    	logger.debug("*******In decrementCounter function of ParallelCounter class*******");
         return counter.decrementAndGet();
     }
 
@@ -60,7 +60,7 @@ public class ParallelCounter {
      * @return the current counter value
      */
     public static synchronized int getCounter() {
-    	logger.info("<= In getCounter function of ParallelCounter class =>");
+    	logger.debug("*******In getCounter function of ParallelCounter class*******");
         return counter.get();
     }
 
@@ -68,7 +68,7 @@ public class ParallelCounter {
 	 * Reset counter value
 	 */
 	public static synchronized void resetCounter() {
-    	logger.info("<= In resetCounter function of ParallelCounter class =>");
+    	logger.debug("*******In resetCounter function of ParallelCounter class*******");
 		counter.set(0);
 	}
 }

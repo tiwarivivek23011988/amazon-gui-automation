@@ -35,7 +35,7 @@ public class FileSearchUtility {
      * @return - the path of the file if found, null otherwise
      */
     public static String searchFile(String directoryPath, String fileName) {
-    	logger.info("<= In searchFile function =>");
+    	logger.debug("*******In searchFile function*******");
     	try {
         File directory = new File(directoryPath);
 
@@ -65,7 +65,7 @@ public class FileSearchUtility {
      */
     private static String searchFileRecursive(File directory, String fileName) {
     	try {
-	    	logger.info("<= In searchFileRecursive function =>");
+	    	logger.debug("*******In searchFileRecursive function*******");
 	        /**
 	         *  Get all files and sub-directories in the current directory
 	         */

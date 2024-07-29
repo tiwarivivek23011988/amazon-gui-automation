@@ -50,7 +50,7 @@ public class CustomCucumberListener implements ConcurrentEventListener {
      */
     @Override
     public synchronized void setEventPublisher(EventPublisher publisher) {
-    	logger.info("<= In setEventPublisher function =>");
+    	logger.debug("*******In setEventPublisher function*******");
         publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
         publisher.registerHandlerFor(TestStepStarted.class, this::handleTestStepStarted);
         publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
@@ -64,7 +64,7 @@ public class CustomCucumberListener implements ConcurrentEventListener {
      */
     private synchronized void handleTestCaseStarted(TestCaseStarted event) {
 		try {
-		logger.info("<= In handleTestCaseStarted Publisher Event =>");
+		logger.debug("*******In handleTestCaseStarted Publisher Event*******");
     	WebDriverUtilities.browserCounter();
     	
     	if(WebDriverUtilities.getCounter()==WebDriverUtilities.browserNames.size()) {
@@ -89,7 +89,7 @@ public class CustomCucumberListener implements ConcurrentEventListener {
      */
     private synchronized void handleTestStepStarted(TestStepStarted event) {
     	try {
-    	logger.info("<= In handleTestStepStarted Publisher Event =>");
+    	logger.debug("*******In handleTestStepStarted Publisher Event*******");
     	if (event.getTestStep() instanceof PickleStepTestStep) {
             PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
             String stepText = testStep.getStep().getKeyword() + testStep.getStep().getText();
@@ -107,14 +107,13 @@ public class CustomCucumberListener implements ConcurrentEventListener {
      */
     private synchronized void handleTestStepFinished(TestStepFinished event) {
     	try {
-    	logger.info("<= In handleTestStepFinished Publisher Event =>");
+    	logger.debug("*******In handleTestStepFinished Publisher Event*******");
     	if (event.getTestStep() instanceof PickleStepTestStep) {
             PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
             String stepText = testStep.getStep().getKeyword() + testStep.getStep().getText();
             if (event.getResult().getStatus().is(io.cucumber.plugin.event.Status.PASSED)) {
             	CustomTestNGListener.extentTest.get().log(Status.PASS, "Step passed: " + stepText);
             } else if (event.getResult().getStatus().is(io.cucumber.plugin.event.Status.FAILED)) {
-            	System.out.println("<= In handleTestStepFinished Publisher Event =>");
                 if(CustomWebDriverManager.getDriver() != null) {
                 	TakesScreenshot scrShot =((TakesScreenshot)CustomWebDriverManager.getDriver());
                 	String SrcFile=scrShot.getScreenshotAs(OutputType.BASE64);
@@ -137,7 +136,7 @@ public class CustomCucumberListener implements ConcurrentEventListener {
      */
     private synchronized void handleTestCaseFinished(TestCaseFinished event) {
     	try {
-    	logger.info("<= In handleTestCaseFinished Publisher Event =>");
+    	logger.debug("*******In handleTestCaseFinished Publisher Event*******");
     	if (event.getResult().getStatus().is(io.cucumber.plugin.event.Status.PASSED)) {
     		CustomTestNGListener.extentTest.get().log(Status.PASS, "Scenario passed");
         } else if (event.getResult().getStatus().is(io.cucumber.plugin.event.Status.FAILED)) {

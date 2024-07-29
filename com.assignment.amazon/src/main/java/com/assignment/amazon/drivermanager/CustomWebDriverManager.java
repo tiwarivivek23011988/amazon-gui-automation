@@ -29,7 +29,7 @@ public class CustomWebDriverManager {
 	private static final Logger logger = LogManager.getLogger(CustomWebDriverManager.class);
 	
     /** The Constant driver. */
-    private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
     /**
      * Gets the driver.
@@ -37,7 +37,7 @@ public class CustomWebDriverManager {
      * @return the driver
      */
     public static WebDriver getDriver() {
-    	logger.info("<= In getDriver function of CustomWebDriverManager class =>");
+    	logger.debug("*******In getDriver function of CustomWebDriverManager class*******");
         return driver.get();
     }
 
@@ -47,7 +47,7 @@ public class CustomWebDriverManager {
      * @param driverInstance - the new driver
      */
     public static void setDriver(WebDriver driverInstance) {
-    	logger.info("<= In setDriver function of CustomWebDriverManager class =>");
+    	logger.debug("*******In setDriver function of CustomWebDriverManager class*******");
         driver.set(driverInstance);
     }
 
@@ -56,7 +56,7 @@ public class CustomWebDriverManager {
      */
     public static void removeDriver() {
     	try {
-    	logger.info("<= In removeDriver function of CustomWebDriverManager class =>");
+    	logger.debug("*******In removeDriver function of CustomWebDriverManager class*******");
         if (driver.get() != null) {
             driver.get().quit();
             driver.remove();

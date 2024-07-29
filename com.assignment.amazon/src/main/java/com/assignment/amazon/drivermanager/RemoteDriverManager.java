@@ -39,7 +39,7 @@ public class RemoteDriverManager implements AbstractDriverFunction<WebDriver,Mut
 	@Override
 	public synchronized WebDriver getDriver() {
 		try {
-			logger.info("<= In getDriver function of RemoteDriverManager class =>");
+			logger.debug("*******In getDriver function of RemoteDriverManager class*******");
 			String url = (String)WebDriverUtilities.hashMap.get("gridBaseUrl")+(String)WebDriverUtilities.hashMap.get("gridPathParam");
 			return new RemoteWebDriver(new URL(url),getCapabilities());
 		} catch (Exception e) {
@@ -55,7 +55,7 @@ public class RemoteDriverManager implements AbstractDriverFunction<WebDriver,Mut
 	 */
 	@Override
 	public synchronized MutableCapabilities getCapabilities() {
-		logger.info("<= In getCapabilities function of RemoteDriverManager class =>");
+		logger.debug("*******In getCapabilities function of RemoteDriverManager class*******");
 		System.out.println("<= Browser Name Is =>" +WebDriverUtilities.browserName.get());
 		return DriverOptionsFactory.getOptions(WebDriverUtilities.browserName.get());
 	}

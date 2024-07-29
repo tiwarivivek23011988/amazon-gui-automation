@@ -32,7 +32,7 @@ public class CustomExecutionListener implements IExecutionListener{
   	 */
   	@Override
 	  public void onExecutionStart() {
-		logger.info("<= In onExecutionStart function =>");
+		logger.debug("*******In onExecutionStart function*******");
 	    CustomTestNGListener.createInstance();
 	  }
 
@@ -41,7 +41,7 @@ public class CustomExecutionListener implements IExecutionListener{
   	 */
   	@Override
 	  public void onExecutionFinish() {
-		logger.info("<= onExecutionFinish function =>");
+		logger.debug("*******onExecutionFinish function*******");
 		CustomTestNGListener.extentReportPreProcessing();
 	  }
 }

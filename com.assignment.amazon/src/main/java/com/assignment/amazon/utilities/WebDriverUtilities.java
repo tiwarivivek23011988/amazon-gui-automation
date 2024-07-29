@@ -84,12 +84,12 @@ public final class WebDriverUtilities {
 	 */
 	public static synchronized void browserCounter() {
 		try {
-		logger.info("<= In browserCounter method => " +Thread.currentThread().getName());
+		logger.debug("*******In browserCounter method*******" +"\n"+Thread.currentThread().getName());
 		int counter = ParallelCounter.getCounter();
 		if(counter < WebDriverUtilities.browserNames.size()) {
 			browserName.set((String) WebDriverUtilities.browserNames.get(counter));
-			System.out.println("Counter Value Is => " +counter);
-			System.out.println("Browser Name Is => " +browserName.get());
+			logger.info("Counter Value Is => " +counter);
+			logger.info("Browser Name Is => " +browserName.get());
 			ParallelCounter.incrementCounter();
 		} else {
 			ParallelCounter.resetCounter();
@@ -106,7 +106,7 @@ public final class WebDriverUtilities {
 	 * @return the integer value
 	 */
 	public static synchronized int decrementCounter() {
-		logger.info("<== In decrementCounter method ==>");
+		logger.debug("*******In decrementCounter method*******");
 		return ParallelCounter.decrementCounter();
 	}
 	
@@ -116,7 +116,7 @@ public final class WebDriverUtilities {
 	 * @return the counter
 	 */
 	public static synchronized int getCounter() {	
-		logger.info("<== In getCounter method ==>");
+		logger.debug("*******In getCounter method*******");
 		return ParallelCounter.getCounter();
 	}
 	
@@ -126,7 +126,7 @@ public final class WebDriverUtilities {
 	 * @return the scenario counter
 	 */
 	public static synchronized int getScenarioCounter() {
-		logger.info("<== In getScenarioCounter method ==>");
+		logger.debug("*******In getScenarioCounter method*******");
 		return ParallelCounter.scenarioCounter.get();
 	}
 	
@@ -134,7 +134,7 @@ public final class WebDriverUtilities {
 	 * Reset counter.
 	 */
 	public static synchronized void resetCounter() {
-		logger.info("<== In resetCounter method ==>");
+		logger.debug("*******In resetCounter method*******");
 		ParallelCounter.resetCounter();
 	}
 	
@@ -145,9 +145,9 @@ public final class WebDriverUtilities {
 	 */
 	public synchronized WebDriver getDriver() {
 		try {
-			logger.info("<= In getDriver method => " +Thread.currentThread().getName());
+			logger.debug("*******In getDriver method*******" +"\n"+Thread.currentThread().getName());
 			String runType=hashMap.get("runType").toString().toLowerCase();
-			logger.info("<= runType value is => " + runType);
+			logger.info("runType is => " + runType);
 			WebDriver driver=switch(runType) {
 			case "local" -> 
 				switch(browserName.get()) {
@@ -179,7 +179,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void waitForElementToBeVisible(WebElement element) {
 		try {
-		logger.info("<== In waitForElementToBeVisible method ==>");
+		logger.debug("*******In waitForElementToBeVisible method*******");
 		WebDriverWait wait = new WebDriverWait(CustomWebDriverManager.getDriver(), Duration.ofSeconds(30));
 		wait.until(ExpectedConditions.visibilityOf(element));
 		} catch(Exception e) {
@@ -194,7 +194,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void waitForElementToBeClickable(WebElement element) {
 		try {
-		logger.info("<== In waitForElementToBeClickable method ==>");
+		logger.debug("*******In waitForElementToBeClickable method*******");
 		WebDriverWait wait = new WebDriverWait(CustomWebDriverManager.getDriver(), Duration.ofSeconds(30));
 		wait.until(ExpectedConditions.elementToBeClickable(element));
 		} catch(Exception e) {
@@ -209,7 +209,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void waitUntilVisibilityOfAllElementsLocated(List<WebElement> element) {
 		try {
-		logger.info("<== In waitUntilVisibilityOfAllElementsLocated method ==>");
+		logger.debug("*******In waitUntilVisibilityOfAllElementsLocated method*******");
 		WebDriverWait wait = new WebDriverWait(CustomWebDriverManager.getDriver(), Duration.ofSeconds(30));
 		wait.until(ExpectedConditions.visibilityOfAllElements(element));
 		} catch(Exception e) {
@@ -224,9 +224,8 @@ public final class WebDriverUtilities {
 	 */
 	public static void clickOnWebElement(WebElement element) {
 		try {
-		logger.info("<== In clickOnWebElement method ==>");
+		logger.debug("*******In clickOnWebElement method*******");
 		waitForElementToBeClickable(element);
-		scrollToView(element);
 		element.click();
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
@@ -240,7 +239,7 @@ public final class WebDriverUtilities {
 	 */
 	public static Set<String> getWindowHandles() {
 		try {
-		logger.info("<== In getWindowHandles method ==>");
+		logger.debug("*******In getWindowHandles method*******");
 		if(CustomWebDriverManager.getDriver() != null)
 			return CustomWebDriverManager.getDriver().getWindowHandles();
 		} catch(Exception e) {
@@ -257,7 +256,7 @@ public final class WebDriverUtilities {
 	 */
 	public static WebDriver switchToWindowHandle(String handleId) {
 		try {
-		logger.info("<== In switchToWindowHandle method ==>");
+		logger.debug("*******In switchToWindowHandle method*******");
 		if(CustomWebDriverManager.getDriver() != null)
 			return CustomWebDriverManager.getDriver().switchTo().window(handleId);
 		} catch(Exception e) {
@@ -273,7 +272,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void waitForElementVisibilityUsingFluentWait(WebElement element) {
 		try {
-		logger.info("<== In waitForElementVisibilityUsingFluentWait method ==>");
+		logger.debug("*******In waitForElementVisibilityUsingFluentWait method*******");
 		Wait<WebDriver> wait = new FluentWait<>(CustomWebDriverManager.getDriver())
                 .withTimeout(Duration.ofSeconds(30))
                 .pollingEvery(Duration.ofSeconds(1))
@@ -294,7 +293,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void waitForElementClickabilityUsingFluentWait(WebElement element) {
 		try {
-		logger.info("<== In waitForElementClickabilityUsingFluentWait method ==>");
+		logger.debug("*******In waitForElementClickabilityUsingFluentWait method*******");
 		Wait<WebDriver> wait = new FluentWait<>(CustomWebDriverManager.getDriver())
                 .withTimeout(Duration.ofSeconds(30))
                 .pollingEvery(Duration.ofSeconds(1))
@@ -314,7 +313,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void waitForAllAjaxCallsToCompleteUsingFluentWait(WebElement element) {
 		try {
-		logger.info("<== In waitForAllAjaxCallsToCompleteUsingFluentWait method ==>");
+		logger.debug("*******In waitForAllAjaxCallsToCompleteUsingFluentWait method*******");
 		Wait<WebDriver> wait = new FluentWait<>(CustomWebDriverManager.getDriver())
                 .withTimeout(Duration.ofSeconds(50))
                 .pollingEvery(Duration.ofSeconds(1))
@@ -332,7 +331,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void waitForElementsVisibilityUsingFluentWait(List<WebElement> element) {
 		try {
-		logger.info("<== In waitForElementsVisibilityUsingFluentWait method ==>");
+		logger.debug("*******In waitForElementsVisibilityUsingFluentWait method*******");
 		Wait<WebDriver> wait = new FluentWait<>(CustomWebDriverManager.getDriver())
                 .withTimeout(Duration.ofSeconds(30))
                 .pollingEvery(Duration.ofSeconds(1))
@@ -352,7 +351,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void scrollToView(WebElement element) {
 		try {
-		logger.info("<== In scrollToView method ==>");
+		logger.debug("*******In scrollToView method*******");
         ((JavascriptExecutor) CustomWebDriverManager.getDriver()).executeScript("arguments[0].scrollIntoView(true);", element);
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
@@ -366,7 +365,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void scrollToViewAndClick(WebElement element) {
 		try {
-		logger.info("<== In scrollToViewAndClick method ==>");
+		logger.debug("*******In scrollToViewAndClick method*******");
 		//Smooth Scrolling
 		((JavascriptExecutor) CustomWebDriverManager.getDriver()).executeScript("arguments[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center'}); arguments[0].click();", element);
 		} catch(Exception e) {
@@ -379,7 +378,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void maximizeBrowserWindow() {
 		try {
-		logger.info("<== In maximizeBrowserWindow method ==>");
+		logger.debug("*******In maximizeBrowserWindow method*******");
 		CustomWebDriverManager.getDriver().manage().window().maximize();
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
@@ -393,7 +392,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void moveToElementAndPerformElementClickUsingActions(WebElement element) {
 		try {
-		logger.info("<== In moveToElementAndPerformElementClickUsingActions method ==>");
+		logger.debug("*******In moveToElementAndPerformElementClickUsingActions method*******");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
 		actions.moveToElement(element).click().perform();
 		} catch(Exception e) {
@@ -408,7 +407,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void scrollToElementAndPerformElementClickUsingActions(WebElement element) {
 		try {
-		logger.info("<== In scrollToElementAndPerformElementClickUsingActions method ==>");
+		logger.debug("*******In scrollToElementAndPerformElementClickUsingActions method*******");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
 		actions.scrollToElement(element).click().perform();
 		} catch(Exception e) {
@@ -423,9 +422,9 @@ public final class WebDriverUtilities {
 	 */
 	public static void performElementClickAndHoldUsingActions(WebElement element) {
 		try {
-		logger.info("<== In scrollToElementAndPerformElementClickUsingActions method ==>");
+		logger.debug("*******In performElementClickAndHoldUsingActions method*******");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
-		actions.clickAndHold(element).perform();
+		actions.clickAndHold(element).release().build().perform();
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
@@ -438,7 +437,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void performJavaScriptClick(WebElement element) {
 		try {
-		logger.info("<== In performJavaScriptClick method ==>");
+		logger.info("*******In performJavaScriptClick method*******");
 		((JavascriptExecutor) CustomWebDriverManager.getDriver()).executeScript("arguments[0].click();", element);
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
@@ -452,7 +451,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void scrollToElementHeight(WebElement element) {
 		try {
-		logger.info("<== In scrollToElementHeight method ==>");
+		logger.debug("*******In scrollToElementHeight method*******");
 		((JavascriptExecutor) CustomWebDriverManager.getDriver()).executeScript(
 	            "arguments[0].scrollDown = arguments[0].scrollHeight;",
 	            element);
@@ -466,7 +465,7 @@ public final class WebDriverUtilities {
 	 */
 	public static void setBrowserSize() {
 		try {
-		logger.info("<== In setBrowserSize method ==>");
+		logger.debug("*******In setBrowserSize method*******");
 		CustomWebDriverManager.getDriver().manage().window().setSize(new Dimension(1200, 1200));
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
@@ -477,19 +476,38 @@ public final class WebDriverUtilities {
 	 * Zoom out browser window.
 	 */
 	public static void zoomOutBrowserWindow() {
+		logger.debug("*******In zoomOutBrowserWindow method*******");
 		JavascriptExecutor js = (JavascriptExecutor) CustomWebDriverManager.getDriver();
 		js.executeScript("document.body.style.transform = 'scale(0.5)';");
 	}
 	
+	/**
+	 * Wait for css transitions to complete
+	 * 
+	 * @param - WebElement as element
+	 * 
+	 * @return - boolean value once css animation completes
+	 * 
+	 */
+	
 	public static boolean waitForCssTransitionsToComplete(WebElement element) {
+		logger.debug("*******In waitForCssTransitionsToComplete method*******");
 		JavascriptExecutor js = (JavascriptExecutor) CustomWebDriverManager.getDriver();
 		Boolean animationComplete = (Boolean) js.executeScript("return window.getComputedStyle(arguments[0]).animationName !== 'none';", element);
 		return animationComplete;
 	}
 	
+	
+	/**
+	 * Wait for text to be present in element located
+	 * 
+	 * @param WebElement as element, String element text as text
+	 *
+	 */
+	
 	public static void waitUntilTextToBePresentInElementLocated(WebElement element, String text) {
 		try {
-			logger.info("<== In waitForElementsVisibilityUsingFluentWait method ==>");
+			logger.debug("*******In waitUntilTextToBePresentInElementLocated method*******");
 			Wait<WebDriver> wait = new FluentWait<>(CustomWebDriverManager.getDriver())
 	                .withTimeout(Duration.ofSeconds(30))
 	                .pollingEvery(Duration.ofSeconds(1))
@@ -502,22 +520,108 @@ public final class WebDriverUtilities {
 		
 	}
 	
+	/**
+	 * Actions class with keyDown click and hold
+	 * 
+	 * @param Keyboard Keys as key
+	 * 
+	 */
+	
 	public static void keyPressEventUsingActionsClickAndHold(Keys key) {
+		logger.debug("*******In keyPressEventUsingActionsClickAndHold method*******");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
-		actions.keyDown(key).clickAndHold().build().perform();
+		actions.keyDown(key).clickAndHold().pause(Duration.ofMillis(5)).build().perform();
 	}
 	
+	/**
+	 * Move to element using actions and keyboard key press events
+	 * 
+	 * @param WebElement as element, Keyboard Keys as key
+	 * 
+	 */
+	
+	public static void keyPressEventUsingActionsRelease(WebElement element, Keys key) {
+		logger.debug("*******In keyPressEventUsingActionsRelease method*******");
+		Actions actions = new Actions(CustomWebDriverManager.getDriver());
+		actions.moveToElement(element).sendKeys(key).release().perform();
+	}
+	
+	/**
+	 * Actions using sendKeys and keyboard event
+	 * 
+	 * @param Keyboard Keys as key
+	 * 
+	 */
+	
+	public static void keyPressEventUsingActionsSendKeys(Keys key) {
+		logger.debug("*******In keyPressEventUsingActionsSendKeys method*******");
+		Actions actions = new Actions(CustomWebDriverManager.getDriver());
+		actions.sendKeys(key).pause(Duration.ofSeconds(1)).build().perform();
+	}
+	
+	/**
+	 * Plain Actions moveToElement
+	 * 
+	 * @param WebElement as element
+	 * 
+	 */
+	
 	public static void moveToElementUsingActions(WebElement element) {
+		logger.debug("*******In moveToElementUsingActions method*******");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
 		actions.moveToElement(element).build().perform();
 	}
 	
+	/**
+	 * Plain Actions cickAndHold
+	 * 
+	 * @param - WebElement as element
+	 * 
+	 */
+	
 	public static void clickAndHoldUsingActions(WebElement element) {
+		logger.debug("*******In clickAndHoldUsingActions method*******");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
 		actions.clickAndHold(element).build().perform();
 	}
 	
-	public static void selectByIndexUsingJavascript(WebElement element, int index) {
+	/**
+	 * Select by visible text using Javascript
+	 * 
+	 * @param - WebElement as element, integer as index of Select drop-down
+	 * 
+	 */
+	public static synchronized void selectByIndexUsingJavascript(WebElement element, int index) {
+		logger.debug("*******In selectByIndexUsingJavascript method*******");
 		((JavascriptExecutor) CustomWebDriverManager.getDriver()).executeScript(String.format("arguments[0].selectedIndex = %d;",index), element);
+	}
+	
+	/**
+	 * Select by visible text using Javascript and wait
+	 * till element is clicked.
+	 * 
+	 * @param - WebElement as element, integer as index of Select drop-down
+	 * 
+	 */
+	public static void selectByIndexUsingJsAndWaitTillElementClicked(WebElement element, int index) {
+		logger.debug("*******In selectByIndexUsingJsAndWaitTillElementClicked method*******");
+		JavascriptExecutor jsExecutor = (JavascriptExecutor) CustomWebDriverManager.getDriver();
+
+		/** Execute JavaScript to set selectedIndex and click with retry mechanism */
+		jsExecutor.executeScript(
+		    "var element = arguments[0]; " +
+		    "var index = arguments[1]; " +
+		    "var attempts = 0; " +
+		    "var maxAttempts = 50; " + /** Adjust the number of attempts as needed */
+		    "function tryClick() { " +
+		    "   element.selectedIndex = index; " +
+		    "   element.click(); " +
+		    "   attempts++; " +
+		    "   if (!element.onclick && attempts < maxAttempts) { " +
+		    "       setTimeout(tryClick, 1000); " + /** Adjust the timeout (1000 ms = 1 second) as needed */
+		    "   } " +
+		    "} " +
+		    "tryClick();",
+		    element, index);
 	}
 }

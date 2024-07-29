@@ -2,6 +2,6 @@
 "url":"https://www.amazon.in",
 "gridBaseUrl": "http://localhost:4444",
 "gridPathParam": "/wd/hub",
-"browserName":["chrome"],
+"browserName":["edge"],
 "runType":"local"
 }

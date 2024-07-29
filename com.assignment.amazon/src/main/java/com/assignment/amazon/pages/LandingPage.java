@@ -48,6 +48,10 @@ public class LandingPage {
 	@FindBy(xpath = "//div[@id='nav-search-dropdown-card']//child::select[@id='searchDropdownBox']/option")
 	List<WebElement> searchWebElement;
 	
+	/** The search web element. */
+	@FindBy(xpath = "//div[@id='nav-search-dropdown-card']//child::select[@id='searchDropdownBox']")
+	WebElement selectWebElement;
+	
 	/**Category drop down selected text web-element */
 	@FindBy(id="nav-search-label-id")
 	WebElement categoryTextToVerify;
@@ -67,7 +71,7 @@ public class LandingPage {
 	@FindBy(xpath="//div[contains(@id,'nav-flyout-searchAjax')]/descendant::div[@role='button']")
 	List<WebElement> autoCompleteSuggestions;
 	
-	@FindBy(id="//div[contains(@id,'nav-flyout-searchAjax')]/div[@class='autocomplete-results-container']")
+	@FindBy(id="//div[contains(@id,'nav-flyout-searchAjax')]")
 	WebElement searchBoxAjax;
 	
 	/** The searched product list. */
@@ -97,28 +101,27 @@ public class LandingPage {
 	 * @param dropDownValue - the drop down value
 	 * @return true, if successful
 	 */
-	public boolean selectCategoryFromDropdown(String dropDownValue) {
+	public synchronized boolean selectCategoryFromDropdown(String dropDownValue) {
 		try {
-		logger.info("<= In selectCategoryFromDropdown function =>");
-		WebDriverUtilities.scrollToView(categoryDropDownById);
-		WebDriverUtilities.moveToElementAndPerformElementClickUsingActions(categoryDropDownById);
-		WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(categoryDropDownById);
-		WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(searchWebElement);
+		logger.debug("*******In selectCategoryFromDropdown function*******");
+		helperFunctionToHandleCategoryDropDown();
 		int index=0;
 		for(WebElement element: searchWebElement) {
 		WebDriverUtilities.scrollToView(element);
 		WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
+		boolean flag=false;
 		if(element.getText().equals(dropDownValue)) {
-			WebDriverUtilities.selectByIndexUsingJavascript(categoryDropDownById, index);
-			System.out.println("Index is => " +index);
-			WebDriverUtilities.scrollToView(categoryTextToVerify);
-			WebDriverUtilities.waitForElementVisibilityUsingFluentWait(categoryTextToVerify);
-			if(categoryTextToVerify.getText().equals(dropDownValue)) {
+			flag=helperFunctionToVerifyCategoryDropDownValue(element, categoryTextToVerify, index, dropDownValue);
+			if(flag) {
 				return true;
 			}
-		} else {
-			WebDriverUtilities.keyPressEventUsingActionsClickAndHold(Keys.DOWN);
 		}
+		if(!flag) {
+			if(helperFunctionToVerifyCategoryDropDownValue(element, categoryTextToVerify, index, dropDownValue)) {
+				return true;
+			}
+		}
+		WebDriverUtilities.keyPressEventUsingActionsClickAndHold(Keys.DOWN);
 		index++;
 		}
 	  } catch(Exception e) {
@@ -126,6 +129,32 @@ public class LandingPage {
 		  return false;
 	  }
 		return false;
+	}
+	
+	private boolean helperFunctionToVerifyCategoryDropDownValue(WebElement currentElement, WebElement elementToVerify, int optionIndex, String expectedValue) {
+		helperFunctionToHandleCategoryDropDown();
+		for(WebElement element: searchWebElement) {
+			if(!element.getText().equals(currentElement.getText())) {
+				WebDriverUtilities.selectByIndexUsingJavascript(currentElement, optionIndex);
+				WebDriverUtilities.waitForElementVisibilityUsingFluentWait(elementToVerify);
+				WebDriverUtilities.scrollToView(elementToVerify);
+			}
+			if(elementToVerify.getText().equals(expectedValue)) {
+				WebDriverUtilities.performJavaScriptClick(currentElement);
+				return true;
+			}
+			WebDriverUtilities.keyPressEventUsingActionsClickAndHold(Keys.DOWN);
+		   }
+		
+			return false;
+	}
+	
+	
+	private void helperFunctionToHandleCategoryDropDown() {
+		WebDriverUtilities.scrollToView(categoryDropDownById);
+		WebDriverUtilities.moveToElementAndPerformElementClickUsingActions(categoryDropDownById);
+		WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(categoryDropDownById);
+		WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(searchWebElement);
 	}
 	
 	/**
@@ -136,7 +165,7 @@ public class LandingPage {
 	 */
 	public boolean inputTextInSearchBox(String inputText) {
 	try {
-		logger.info("<= In inputTextInSearchBox function =>");
+		logger.debug("*******In inputTextInSearchBox function*******");
 		WebDriverUtilities.waitForElementVisibilityUsingFluentWait(searchBox);
 		WebDriverUtilities.scrollToView(searchBox);
 		searchBox.clear();
@@ -155,12 +184,12 @@ public class LandingPage {
 	 */
 	public boolean checkAutoCompleteSuggestions(String productName) {
 		try {
-			logger.info("<= In storeAutoCompleteSuggestions function =>");
-			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBox);
+			logger.debug("*******In storeAutoCompleteSuggestions function*******");
+			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
 			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 			for(WebElement element:autoCompleteSuggestions) {
-				WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
 				WebDriverUtilities.moveToElementUsingActions(element);
+				WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
 				String attributeTextFromAutoCompleteSearchBox=element.getAttribute("aria-label").toString();
 				if(attributeTextFromAutoCompleteSearchBox.length()==productName.length()) {
 					if(!attributeTextFromAutoCompleteSearchBox.equalsIgnoreCase(productName)) {
@@ -185,7 +214,7 @@ public class LandingPage {
 	 */
 	public WebElement returnElementMatchingAutoSuggestedText(String inputText) {
 		try {
-			logger.info("<= In returnElementMatchingAutoSuggestedText function =>");
+			logger.debug("*******In returnElementMatchingAutoSuggestedText function*******");
 			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBox);
 			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 			for(WebElement element: autoCompleteSuggestions) {
@@ -208,7 +237,7 @@ public class LandingPage {
 	 */
 	public boolean checkForPresenceOfAutoCompleteSuggestion(String searchText) {
 		try {
-			logger.info("<= In checkForPresenceOfAutoCompleteSuggestion function =>");
+			logger.debug("*******In checkForPresenceOfAutoCompleteSuggestion function*******");
 			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
 			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 			for(WebElement element: autoCompleteSuggestions) {
@@ -230,7 +259,7 @@ public class LandingPage {
 	 */
 	public boolean clickOnFirstResultFromResultsCatalog(String searchText) {
 		try {
-			logger.info("<= In clickOnFirstResultFromResultsCatalog function =>");
+			logger.debug("*******In clickOnFirstResultFromResultsCatalog function*******");
 			for(WebElement element:listOfSearchedProducts) {
 				String formattedString=element.getText().replaceAll("[^A-Za-z0-9 ]+", "");
 				if(formattedString.equalsIgnoreCase(searchText) || formattedString.toLowerCase().contains(searchText.toLowerCase())) {
@@ -253,7 +282,7 @@ public class LandingPage {
 	 */
 	public List<String> storeResultsCatalogElementsText(String searchText) {
 		try {
-			logger.info("<= In storeResultsCatalogElementsText function =>");
+			logger.debug("*******In storeResultsCatalogElementsText function*******");
 			WebDriverUtilities.waitUntilVisibilityOfAllElementsLocated(listOfSearchedProducts);
 			return listOfSearchedProducts.stream().filter(x -> (x.getText().replaceAll("[^A-Za-z0-9 ]+", "").equalsIgnoreCase(searchText) || x.getText().replaceAll("[^A-Za-z0-9 ]+", "").toLowerCase().contains(searchText.toLowerCase()))).map(x -> x.getText().replaceAll("[^A-Za-z0-9 ]+", "")).collect(Collectors.toList());
 		 } catch(Exception e) {
@@ -269,7 +298,7 @@ public class LandingPage {
 	 */
 	public String getProductNameFromTitle() {
 		try {
-			logger.info("<= In getProductNameFromTitle function =>");
+			logger.debug("*******In getProductNameFromTitle function*******");
 			WebDriverUtilities.waitForElementToBeVisible(productTitle);
 			return productTitle.getText().replaceAll("[^A-Za-z0-9 ]+", "");
 		 } catch(Exception e) {

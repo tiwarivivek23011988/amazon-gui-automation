@@ -50,7 +50,7 @@ public class AmazonSearchStepDefinition {
 	 */
 	@Given("User navigates to amazon page")
 	public void userNavigatesToAmazonPage() {
-		logger.info("<= In userNavigatesToAmazonPage function => " +Thread.currentThread().getName());
+		logger.debug("*******In userNavigatesToAmazonPage function*******" +"\n"+Thread.currentThread().getName());
 		driver.get((String) WebDriverUtilities.hashMap.get("url"));
 		
 	}
@@ -64,7 +64,7 @@ public class AmazonSearchStepDefinition {
 	 */
 	@When("User selects {string} from categories dropdown and types {string}")
 	public void userSelectsCategoryValueAndTypesProductName(String dropdownValue, String productName) {
-		logger.info("<= In userSelectsCategoryValueAndTypesProductName function => ");
+		logger.debug("*******In userSelectsCategoryValueAndTypesProductName function*******");
 		boolean isElementSelected = landingPage.selectCategoryFromDropdown(dropdownValue);
 		Assert.assertTrue(isElementSelected);
 		Assert.assertTrue(landingPage.inputTextInSearchBox(productName));
@@ -78,7 +78,7 @@ public class AmazonSearchStepDefinition {
 	@Then("User validates auto-complete suggestions align with the provided {string}")
 	public void userValidatesAutoCompleteSuggestionsWithProductName(String productName) {
 		try {
-			logger.info("<= In userValidatesAutoCompleteSuggestionsWithProductName function => ");
+			logger.debug("*******In userValidatesAutoCompleteSuggestionsWithProductName function*******");
 			boolean flag = landingPage.checkAutoCompleteSuggestions(productName);
 			Assert.assertTrue(flag);
 		} catch(Exception e) {
@@ -93,7 +93,7 @@ public class AmazonSearchStepDefinition {
 	 */
 	@Then("User clicks on {string} from auto-complete option thus suggested")
 	public void userClicksOnAutoCompleteSuggestionMatchingProductName(String productName) {
-		logger.info("<= In userClicksOnAutoCompleteSuggestionMatchingProductName function => ");
+		logger.debug("*******In userClicksOnAutoCompleteSuggestionMatchingProductName function*******");
 		Assert.assertTrue(landingPage.checkForPresenceOfAutoCompleteSuggestion(productName));
 		WebDriverUtilities.clickOnWebElement(landingPage.returnElementMatchingAutoSuggestedText(productName));
 		
@@ -106,7 +106,7 @@ public class AmazonSearchStepDefinition {
 	 */
 	@And("User validates that {string} search returns products catalog list")
 	public void userValidatesPresenceOfProductResultsForTheSearchedProduct(String productName) {
-		logger.info("<= In userValidatesPresenceOfProductResultsForTheSearchedProduct function => ");
+		logger.debug("*******In userValidatesPresenceOfProductResultsForTheSearchedProduct function*******");
 		Assert.assertTrue(landingPage.storeResultsCatalogElementsText(productName).size()>0);
 	}
 	
@@ -117,7 +117,7 @@ public class AmazonSearchStepDefinition {
 	 */
 	@Then("User clicks on the {string} product from resulting product-catalog list")
 	public void userClicksOnTheProductFromResultingProductCatalogList(String productName) {
-		logger.info("<= In userClicksOnTheProductFromResultingProductCatalogList function => ");
+		logger.debug("*******In userClicksOnTheProductFromResultingProductCatalogList function*******");
 		Assert.assertTrue(landingPage.clickOnFirstResultFromResultsCatalog(productName));
 	}
 	
@@ -129,7 +129,7 @@ public class AmazonSearchStepDefinition {
 	@And("User validates that {string} specification page opens in new tab")
 	public void userValidatesThatProductSpecificationPageOpensInNewTab(String productName) {
 		try {
-			logger.info("<= In userValidatesThatProductSpecificationPageOpensInNewTab function => ");
+			logger.debug("*******In userValidatesThatProductSpecificationPageOpensInNewTab function*******");
 			Set<String> set = WebDriverUtilities.getWindowHandles();
 			Assert.assertTrue(set.size()>1);
 			Iterator<String> itr = set.iterator();

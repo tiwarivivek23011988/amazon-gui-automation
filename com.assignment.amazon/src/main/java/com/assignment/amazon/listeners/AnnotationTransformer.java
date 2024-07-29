@@ -40,7 +40,7 @@ public class AnnotationTransformer implements IAnnotationTransformer {
     @SuppressWarnings("rawtypes")
 	@Override
     public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
-    	logger.info("In transform function of AnnotationTransformer class");
+    	logger.debug("*******In transform function of AnnotationTransformer class*******");
         Class<? extends IRetryAnalyzer> retry = annotation.getRetryAnalyzerClass();
         if (retry == null) {
             annotation.setRetryAnalyzer((Class<? extends IRetryAnalyzer>) CustomRetryAnalyser.class);

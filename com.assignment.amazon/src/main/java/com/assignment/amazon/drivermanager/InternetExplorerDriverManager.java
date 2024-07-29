@@ -32,7 +32,7 @@ public class InternetExplorerDriverManager implements AbstractDriverFunction<Web
 	 */
 	@Override
 	public synchronized WebDriver getDriver() {
-		logger.info("<= In getDriver function of EdgeDriverManager class =>");
+		logger.debug("*******In getDriver function of EdgeDriverManager class*******");
 		return new InternetExplorerDriver(getCapabilities());
 	}
 
@@ -43,7 +43,7 @@ public class InternetExplorerDriverManager implements AbstractDriverFunction<Web
 	 */
 	@Override
 	public InternetExplorerOptions getCapabilities() {
-		logger.info("<= In getCapabilities function of EdgeDriverManager class =>");
+		logger.debug("*******In getCapabilities function of EdgeDriverManager class*******");
 		return DriverOptionsFactory.getInternetExplorerOptions();
 	}
 

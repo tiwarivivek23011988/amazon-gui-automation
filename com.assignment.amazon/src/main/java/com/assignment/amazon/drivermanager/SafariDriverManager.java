@@ -34,7 +34,7 @@ public class SafariDriverManager implements AbstractDriverFunction<WebDriver,Saf
 	 */
 	@Override
 	public synchronized WebDriver getDriver() {
-		logger.info("<= In getDriver function of SafariDriverManager class =>");
+		logger.debug("*******In getDriver function of SafariDriverManager class*******");
 		return new SafariDriver(getCapabilities());
 	}
 
@@ -45,7 +45,7 @@ public class SafariDriverManager implements AbstractDriverFunction<WebDriver,Saf
 	 */
 	@Override
 	public SafariOptions getCapabilities() {
-		logger.info("<= In getCapabilities function of SafariDriverManager class =>");
+		logger.debug("*******In getCapabilities function of SafariDriverManager class*******");
 		return DriverOptionsFactory.getSafariOptions();
 	}
 

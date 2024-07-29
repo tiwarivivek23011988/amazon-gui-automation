@@ -33,7 +33,7 @@ public class ChromeDriverManager implements AbstractDriverFunction<WebDriver,Chr
 	 */
 	@Override
 	public synchronized WebDriver getDriver() {
-		logger.info("<= In getDriver function of ChromeDriverManager Class =>");
+		logger.debug("*******In getDriver function of ChromeDriverManager Class*******");
 		return new ChromeDriver(getCapabilities());
 	}
 
@@ -44,7 +44,7 @@ public class ChromeDriverManager implements AbstractDriverFunction<WebDriver,Chr
 	 */
 	@Override
 	public ChromeOptions getCapabilities() {
-		logger.info("<= In getCapabilities function of ChromeDriverManager Class =>");
+		logger.debug("*******In getCapabilities function of ChromeDriverManager Class*******");
 		return DriverOptionsFactory.getChromeOptions();
 	}
 

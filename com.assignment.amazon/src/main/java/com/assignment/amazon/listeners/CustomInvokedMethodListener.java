@@ -38,7 +38,7 @@ public class CustomInvokedMethodListener implements IInvokedMethodListener {
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         if (method.isTestMethod()) {
-            logger.info("<= In beforeInvocation funtion =>");
+            logger.debug("*******In beforeInvocation funtion*******");
         }
     }
 
@@ -51,7 +51,7 @@ public class CustomInvokedMethodListener implements IInvokedMethodListener {
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
     	if(method.isTestMethod()) {
-    		logger.info("<= In afterInvocation funtion =>");
+    		logger.debug("*******In afterInvocation funtion*******");
     	}
     }
 }

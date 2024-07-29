@@ -67,7 +67,7 @@ public class CustomTestNGListener implements ITestListener {
      * @return - the extent reports
      */
     public static synchronized ExtentReports createInstance() {
-    	logger.info("<= In createInstance function =>");
+    	logger.debug("*******In createInstance function*******");
     	try {
     	sparkReporter = new ExtentSparkReporter(System.getProperty("user.dir") + "/test-output/ExtentReport.html");
         sparkReporter.config().setDocumentTitle("Automation Report");
@@ -92,7 +92,7 @@ public class CustomTestNGListener implements ITestListener {
      * @return single instance of CustomTestNGListener
      */
     public synchronized static ExtentReports getInstance() {
-    	logger.info("<= In getInstance function =>");
+    	logger.debug("*******In getInstance function*******");
         return extent;
     }
 
@@ -103,8 +103,8 @@ public class CustomTestNGListener implements ITestListener {
      */
     @Override
     public synchronized void onTestStart(ITestResult result) {
-    	logger.info("Test Case started!");
-    	logger.info("<= In onTestStart function =>");
+    	logger.debug("*******Test Case started!*******");
+    	logger.debug("*******In onTestStart function*******");
     }
 
     /**
@@ -114,7 +114,7 @@ public class CustomTestNGListener implements ITestListener {
      */
     @Override
     public synchronized void onTestSuccess(ITestResult result) {
-    	logger.info("<= In onTestSuccess function =>");
+    	logger.debug("*******In onTestSuccess function*******");
        extentTest.get().log(Status.PASS, "Test Passed");
     }
     
@@ -125,7 +125,7 @@ public class CustomTestNGListener implements ITestListener {
      */
     @Override
     public synchronized void onTestFailure(ITestResult result) {
-       logger.info("<= In onTestFailure function =>");
+       logger.debug("*******In onTestFailure function*******");
        extentTest.get().log(Status.FAIL, "Test Failed");
        extentTest.get().log(Status.FAIL, result.getThrowable());
     }
@@ -137,7 +137,7 @@ public class CustomTestNGListener implements ITestListener {
      */
     @Override
     public synchronized void onTestSkipped(ITestResult result) {
-      logger.info("<= In onTestSkipped function =>");
+      logger.debug("*******In onTestSkipped function*******");
       extentTest.get().log(Status.SKIP, "Test Skipped");
     }
     
@@ -145,7 +145,7 @@ public class CustomTestNGListener implements ITestListener {
      * Extent report pre-processing function.
      */
     public static synchronized void extentReportPreProcessing() {
-        logger.info("<= In extentReportPreProcessing function =>");
+        logger.debug("*******In extentReportPreProcessing function*******");
     	
     	ExtentTest test = extent.createTest("Test Coverage Report");
 
@@ -214,14 +214,14 @@ public class CustomTestNGListener implements ITestListener {
      */
     private synchronized static void extractAndLogCoverageInfo(Document doc, ExtentTest test) {
         try {
-        CustomTestNGListener.logger.info("<= In extractAndLogCoverageInfo function =>");
+        CustomTestNGListener.logger.debug("*******In extractAndLogCoverageInfo function*******");
     	NodeList packageList = doc.getElementsByTagName("package");
         for (int i = 0; i < packageList.getLength(); i++) {
             Node packageNode = packageList.item(i);
             if (packageNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element packageElement = (Element) packageNode;
                 String packageName = packageElement.getAttribute("name");
-                System.out.println("Package Name: " + packageName);
+                CustomTestNGListener.logger.info("Package Name: " + packageName);
 
                 ExtentTest packageTest = test.createNode("<span style='color:white;'>Package: " + packageName + "</span>");
 
@@ -231,7 +231,7 @@ public class CustomTestNGListener implements ITestListener {
                     if (classNode.getNodeType() == Node.ELEMENT_NODE) {
                         Element classElement = (Element) classNode;
                         String className = classElement.getAttribute("name");
-                        System.out.println("Class Name: " + className);
+                        CustomTestNGListener.logger.info("Class Name: " + className);
 
                         Map<String, String> coverageDetails = new HashMap<>();
                         NodeList counterList = classElement.getElementsByTagName("counter");

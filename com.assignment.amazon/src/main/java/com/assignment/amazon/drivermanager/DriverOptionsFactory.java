@@ -46,7 +46,7 @@ public class DriverOptionsFactory {
 	 */
 	public static MutableCapabilities getOptions(String browser) {
 		try {
-		logger.info("<= In getOptions function =>");
+		logger.debug("*******In getOptions function*******");
         return switch (browser.toLowerCase()) {
             case "chrome" -> getChromeOptions();
             case "firefox" -> getFirefoxOptions();
@@ -68,7 +68,7 @@ public class DriverOptionsFactory {
      */
     static ChromeOptions getChromeOptions() {
     	try {
-    	logger.info("<= In getChromeOptions function =>");
+    	logger.debug("*******In getChromeOptions function*******");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--start-maximized");
         options.addArguments("--incognito");
@@ -90,9 +90,10 @@ public class DriverOptionsFactory {
      */
     static FirefoxOptions getFirefoxOptions() {
     	try {
-    	logger.info("<= In getFirefoxOptions function =>");
+    	logger.debug("*******In getFirefoxOptions function*******");
     	FirefoxProfile profile = new FirefoxProfile();
         FirefoxOptions options = new FirefoxOptions();
+        options.addPreference("browser.privatebrowsing.autostart", true);
         options.setProfile(profile);
         options.setCapability(CapabilityType.BROWSER_NAME, "firefox");
         return options;
@@ -109,7 +110,7 @@ public class DriverOptionsFactory {
      */
     static SafariOptions getSafariOptions() {
     	try {
-    	logger.info("<= In getSafariOptions function =>");
+    	logger.debug("*******In getSafariOptions function*******");
         SafariOptions options = new SafariOptions();
         options.setCapability(CapabilityType.BROWSER_NAME, "Safari");
         return options;
@@ -126,7 +127,7 @@ public class DriverOptionsFactory {
      */
     static InternetExplorerOptions getInternetExplorerOptions() {
     	try {
-    	logger.info("<= In getInternetExplorerOptions function =>");
+    	logger.debug("*******In getInternetExplorerOptions function*******");
         InternetExplorerOptions options = new InternetExplorerOptions();
         options.setCapability("enablePersistentHover", true);
         options.setCapability("nativeEvents", true);
@@ -148,8 +149,11 @@ public class DriverOptionsFactory {
      */
     static EdgeOptions getEdgeOptions() {
     	try {
-    	logger.info("<= In getInternetExplorerOptions function =>");
+    	logger.debug("*******In getInternetExplorerOptions function*******");
         EdgeOptions options = new EdgeOptions();
+        options.addArguments("--disable-notifications");
+        options.addArguments("--disable-popup-blocking");
+        options.addArguments("-inprivate");
         return options;
     	} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
