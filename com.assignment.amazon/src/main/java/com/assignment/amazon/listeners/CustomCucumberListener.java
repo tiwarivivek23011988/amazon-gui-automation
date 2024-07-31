@@ -5,6 +5,9 @@
 package com.assignment.amazon.listeners;
 
 
+import java.io.File;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
@@ -116,9 +119,11 @@ public class CustomCucumberListener implements ConcurrentEventListener {
             } else if (event.getResult().getStatus().is(io.cucumber.plugin.event.Status.FAILED)) {
                 if(CustomWebDriverManager.getDriver() != null) {
                 	TakesScreenshot scrShot =((TakesScreenshot)CustomWebDriverManager.getDriver());
-                	String SrcFile=scrShot.getScreenshotAs(OutputType.BASE64);
+                	File SrcFile=scrShot.getScreenshotAs(OutputType.FILE);
+                	String fileName="target/"+stepText.replaceAll("[^a-zA-Z]","")+".png";
+                	FileUtils.copyFile(SrcFile, new File(fileName));
                 	CustomTestNGListener.extentTest.get().log(Status.FAIL, "Step failed: " + stepText, 
-                			MediaEntityBuilder.createScreenCaptureFromPath(SrcFile).build());
+                			MediaEntityBuilder.createScreenCaptureFromPath(fileName).build());
                 }
             } else {
             	CustomTestNGListener.extentTest.get().log(Status.SKIP, "Step skipped: " + stepText);

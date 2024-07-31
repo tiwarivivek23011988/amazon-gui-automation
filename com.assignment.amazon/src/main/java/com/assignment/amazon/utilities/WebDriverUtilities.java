@@ -7,6 +7,7 @@ package com.assignment.amazon.utilities;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
 import com.assignment.amazon.drivermanager.ChromeDriverManager;
 import com.assignment.amazon.drivermanager.CustomWebDriverManager;
@@ -315,7 +317,7 @@ public final class WebDriverUtilities {
 		try {
 		logger.debug("*******In waitForAllAjaxCallsToCompleteUsingFluentWait method*******");
 		Wait<WebDriver> wait = new FluentWait<>(CustomWebDriverManager.getDriver())
-                .withTimeout(Duration.ofSeconds(50))
+                .withTimeout(Duration.ofSeconds(60))
                 .pollingEvery(Duration.ofSeconds(1))
                 .ignoring(Exception.class);
         wait.until(ExpectedConditions.jsReturnsValue("return document.readyState === 'complete';"));
@@ -333,7 +335,7 @@ public final class WebDriverUtilities {
 		try {
 		logger.debug("*******In waitForElementsVisibilityUsingFluentWait method*******");
 		Wait<WebDriver> wait = new FluentWait<>(CustomWebDriverManager.getDriver())
-                .withTimeout(Duration.ofSeconds(30))
+                .withTimeout(Duration.ofSeconds(60))
                 .pollingEvery(Duration.ofSeconds(1))
                 .ignoring(Exception.class);
 
@@ -623,5 +625,25 @@ public final class WebDriverUtilities {
 		    "} " +
 		    "tryClick();",
 		    element, index);
+	}
+	
+	/**
+	 * Switch to new window from current window
+	 * 
+	 */
+	public static void switchToWindow() {
+		logger.debug("*******In switchToWindow method*******");
+		Set<String> set = getWindowHandles();
+		String currentWindowHandle=CustomWebDriverManager.getDriver().getWindowHandle();
+		String handleToSwitch=null;
+		Assert.assertTrue(set.size()>1);
+		Iterator<String> itr = set.iterator();
+		while(itr.hasNext()) {
+			String handle = itr.next();
+			if(!handle.equals(currentWindowHandle)) {
+				handleToSwitch=handle;
+			}
+		}
+		CustomWebDriverManager.setDriver(WebDriverUtilities.switchToWindowHandle(handleToSwitch));
 	}
 }

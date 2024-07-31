@@ -5,9 +5,6 @@
 
 package com.assignment.amazon.stepdefinitions;
 
-import java.util.Iterator;
-import java.util.Set;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -51,8 +48,8 @@ public class AmazonSearchStepDefinition {
 	@Given("User navigates to amazon page")
 	public void userNavigatesToAmazonPage() {
 		logger.debug("*******In userNavigatesToAmazonPage function*******" +"\n"+Thread.currentThread().getName());
-		driver.get((String) WebDriverUtilities.hashMap.get("url"));
-		
+		String url = (String) WebDriverUtilities.hashMap.get("url");
+		driver.get(url);
 	}
 	
 	/**
@@ -130,15 +127,7 @@ public class AmazonSearchStepDefinition {
 	public void userValidatesThatProductSpecificationPageOpensInNewTab(String productName) {
 		try {
 			logger.debug("*******In userValidatesThatProductSpecificationPageOpensInNewTab function*******");
-			Set<String> set = WebDriverUtilities.getWindowHandles();
-			Assert.assertTrue(set.size()>1);
-			Iterator<String> itr = set.iterator();
-			String parentWindowHandle = itr.next();
-			String childWindowHandle = itr.next();
-			CustomWebDriverManager.setDriver(WebDriverUtilities.switchToWindowHandle(childWindowHandle));
 			Assert.assertTrue(landingPage.getProductNameFromTitle().toLowerCase().contains(productName.toLowerCase()));
-			driver.close();
-			CustomWebDriverManager.setDriver(WebDriverUtilities.switchToWindowHandle(parentWindowHandle));
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}

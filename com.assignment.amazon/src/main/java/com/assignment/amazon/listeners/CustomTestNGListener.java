@@ -4,17 +4,22 @@
  */
 package com.assignment.amazon.listeners;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.w3c.dom.Document;
@@ -25,11 +30,13 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.assignment.amazon.drivermanager.CustomWebDriverManager;
 import com.assignment.amazon.exceptions.ExceptionHandler;
 import com.assignment.amazon.utilities.FileSearchUtility;
 import com.assignment.amazon.utilities.RandomUtilities;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
@@ -59,7 +66,7 @@ public class CustomTestNGListener implements ITestListener {
     private static ExtentSparkReporter sparkReporter;
     
     /** The extent test. */
-    static volatile ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>();
+    static final ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>();
     
     /**
      * Creates the instance of extent reports
@@ -128,6 +135,19 @@ public class CustomTestNGListener implements ITestListener {
        logger.debug("*******In onTestFailure function*******");
        extentTest.get().log(Status.FAIL, "Test Failed");
        extentTest.get().log(Status.FAIL, result.getThrowable());
+       if(CustomWebDriverManager.getDriver() != null) {
+           TakesScreenshot scrShot =((TakesScreenshot)CustomWebDriverManager.getDriver());
+           File SrcFile=scrShot.getScreenshotAs(OutputType.FILE);
+           String fileName="target/"+result.getName()+LocalTime.now().toString()+".png";
+           try {
+			FileUtils.copyFile(SrcFile, new File(fileName));
+			} catch (IOException e) {
+				ExceptionHandler.throwsException(e);
+			}
+           CustomTestNGListener.extentTest.get().log(Status.FAIL, "Step failed: ", 
+               			MediaEntityBuilder.createScreenCaptureFromPath(fileName).build());
+          
+           }
     }
 
     /**

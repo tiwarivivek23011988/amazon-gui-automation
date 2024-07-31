@@ -68,19 +68,15 @@ public class LandingPage {
 	@FindBy(id="twotabsearchtextbox")
 	WebElement searchBox;
 	
-	@FindBy(xpath="//div[contains(@id,'nav-flyout-searchAjax')]/descendant::div[@role='button']")
+	@FindBy(xpath="//div[@id='nav-flyout-searchAjax']//div[@role='button']")
 	List<WebElement> autoCompleteSuggestions;
 	
-	@FindBy(id="//div[contains(@id,'nav-flyout-searchAjax')]")
+	@FindBy(id="nav-flyout-searchAjax")
 	WebElement searchBoxAjax;
 	
 	/** The searched product list. */
 	@FindBy(xpath="//span[contains(text(),'//span[contains(@class,'a-size-base-plus')]')]")
 	List<WebElement> searchedProductList;
-	
-	/** The visit apple store. */
-	@FindBy(xpath="//div[contains(@class,'a-section')]/a[@id='bylineInfo']")
-	WebElement visitAppleStore;
 	
 	/** The apple store search results. */
 	@FindBy(xpath="//ul[contains(@class,'Navigation__navList')]/li")
@@ -96,10 +92,11 @@ public class LandingPage {
 	
 	
 	/**
-	 * Select category from dropdown.
+	 * Select category from drop-down.
 	 *
 	 * @param dropDownValue - the drop down value
 	 * @return true, if successful
+	 * 
 	 */
 	public synchronized boolean selectCategoryFromDropdown(String dropDownValue) {
 		try {
@@ -241,7 +238,7 @@ public class LandingPage {
 			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
 			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 			for(WebElement element: autoCompleteSuggestions) {
-					if(element.getText().equalsIgnoreCase(searchText) || element.getText().toLowerCase().contains(searchText.toLowerCase())) {
+				if(element.getText().equalsIgnoreCase(searchText) || element.getText().toLowerCase().contains(searchText.toLowerCase())) {
 						return true;
 				}
 			}
@@ -299,7 +296,9 @@ public class LandingPage {
 	public String getProductNameFromTitle() {
 		try {
 			logger.debug("*******In getProductNameFromTitle function*******");
+			WebDriverUtilities.switchToWindow();
 			WebDriverUtilities.waitForElementToBeVisible(productTitle);
+			WebDriverUtilities.scrollToView(productTitle);
 			return productTitle.getText().replaceAll("[^A-Za-z0-9 ]+", "");
 		 } catch(Exception e) {
 			  ExceptionHandler.throwsException(e);

@@ -29,7 +29,7 @@ public class CustomWebDriverManager {
 	private static final Logger logger = LogManager.getLogger(CustomWebDriverManager.class);
 	
     /** The Constant driver. */
-    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
     /**
      * Gets the driver.
