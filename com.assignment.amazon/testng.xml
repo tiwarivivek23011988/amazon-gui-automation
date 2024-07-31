@@ -21,4 +21,9 @@
       <class name="com.assignment.amazon.runner.TestRunner"/>
     </classes>
   </test>
+  <test name="TestAmazonSearchFunctionalityOnFourthBrowser">
+    <classes>
+      <class name="com.assignment.amazon.runner.TestRunner"/>
+    </classes>
+  </test>
 </suite> <!-- Suite -->
