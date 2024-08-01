@@ -11,6 +11,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import com.assignment.amazon.exceptions.ExceptionHandler;
+
 /**
  * {@summary}
  * 
@@ -34,7 +36,12 @@ public class ChromeDriverManager implements AbstractDriverFunction<WebDriver,Chr
 	@Override
 	public synchronized WebDriver getDriver() {
 		logger.debug("*******In getDriver function of ChromeDriverManager Class*******");
-		return new ChromeDriver(getCapabilities());
+		try {
+			return new ChromeDriver(getCapabilities());
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 
 	/**
@@ -45,7 +52,12 @@ public class ChromeDriverManager implements AbstractDriverFunction<WebDriver,Chr
 	@Override
 	public ChromeOptions getCapabilities() {
 		logger.debug("*******In getCapabilities function of ChromeDriverManager Class*******");
-		return DriverOptionsFactory.getChromeOptions();
+		try {
+			return DriverOptionsFactory.getChromeOptions();
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 
 }

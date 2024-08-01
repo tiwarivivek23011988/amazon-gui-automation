@@ -9,6 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.assignment.amazon.exceptions.ExceptionHandler;
+
 /**
  * {@summary}
  * 
@@ -20,13 +22,13 @@ import org.apache.logging.log4j.Logger;
  * This class uses thread local implementation of counter
  * and scenario counter.
  * 
- * @see ParallelCounter
+ * @see ParallelCounterUtility
  * 
  */
-public class ParallelCounter {
+public class ParallelCounterUtility {
 	
 	/** The Constant logger. */
-	private static final Logger logger = LogManager.getLogger(ParallelCounter.class);
+	private static final Logger logger = LogManager.getLogger(ParallelCounterUtility.class);
 
     /** The Constant counter. */
     private static final AtomicInteger counter = new AtomicInteger(0);
@@ -41,7 +43,12 @@ public class ParallelCounter {
      */
     public static synchronized int incrementCounter() {
     	logger.debug("*******In incrementCounter function of ParallelCounter class*******");
-        return counter.incrementAndGet();
+    	try {
+    		return counter.incrementAndGet();
+    	} catch(Exception e) {
+    		ExceptionHandler.throwsException(e);
+    		throw e;
+    	}
     }
     
     /**
@@ -51,7 +58,12 @@ public class ParallelCounter {
      */
     public static synchronized int decrementCounter() {
     	logger.debug("*******In decrementCounter function of ParallelCounter class*******");
-        return counter.decrementAndGet();
+    	try {
+    		return counter.decrementAndGet();
+    	}catch(Exception e) {
+    		ExceptionHandler.throwsException(e);
+    		throw e;
+    	}
     }
 
     /**
@@ -61,7 +73,12 @@ public class ParallelCounter {
      */
     public static synchronized int getCounter() {
     	logger.debug("*******In getCounter function of ParallelCounter class*******");
-        return counter.get();
+    	try {
+    		return counter.get();
+    	} catch(Exception e) {
+    		ExceptionHandler.throwsException(e);
+    		throw e;
+    	}
     }
 
 	/**
@@ -69,6 +86,11 @@ public class ParallelCounter {
 	 */
 	public static synchronized void resetCounter() {
     	logger.debug("*******In resetCounter function of ParallelCounter class*******");
-		counter.set(0);
+    	try {
+    		counter.set(0);
+    	} catch(Exception e) {
+    		ExceptionHandler.throwsException(e);
+    		throw e;
+    	}
 	}
 }

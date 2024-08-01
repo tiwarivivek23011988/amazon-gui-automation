@@ -11,6 +11,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 
+import com.assignment.amazon.exceptions.ExceptionHandler;
+
 /**
  * {@summary}
  * 
@@ -35,7 +37,12 @@ public class EdgeDriverManager implements AbstractDriverFunction<WebDriver,EdgeO
 	@Override
 	public synchronized WebDriver getDriver() {
 		logger.debug("*******In getDriver function of EdgeDriverManager class*******");
-		return new EdgeDriver(getCapabilities());
+		try {
+			return new EdgeDriver(getCapabilities());
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 
 	/**
@@ -46,7 +53,12 @@ public class EdgeDriverManager implements AbstractDriverFunction<WebDriver,EdgeO
 	@Override
 	public EdgeOptions getCapabilities() {
 		logger.debug("*******In getCapabilities function of EdgeDriverManager class*******");
-		return DriverOptionsFactory.getEdgeOptions();
+		try {
+			return DriverOptionsFactory.getEdgeOptions();
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 
 }

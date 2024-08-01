@@ -123,12 +123,24 @@ public class LandingPage {
 		}
 	  } catch(Exception e) {
 		  ExceptionHandler.throwsException(e);
-		  return false;
+		  throw e;
 	  }
 		return false;
 	}
 	
+	/**
+	 * Select category from drop-down.
+	 *
+	 * @param currentElement - current Element.
+	 * @param elementToVerify - Element to verify
+	 * @param optionIndex - category drop down element index
+	 * @param expectedValue - expected category type
+	 * 
+	 * @return true, if successful
+	 * 
+	 */
 	private boolean helperFunctionToVerifyCategoryDropDownValue(WebElement currentElement, WebElement elementToVerify, int optionIndex, String expectedValue) {
+		try {
 		helperFunctionToHandleCategoryDropDown();
 		for(WebElement element: searchWebElement) {
 			if(!element.getText().equals(currentElement.getText())) {
@@ -144,14 +156,23 @@ public class LandingPage {
 		   }
 		
 			return false;
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 	
 	
 	private void helperFunctionToHandleCategoryDropDown() {
+		try {
 		WebDriverUtilities.scrollToView(categoryDropDownById);
 		WebDriverUtilities.moveToElementAndPerformElementClickUsingActions(categoryDropDownById);
 		WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(categoryDropDownById);
 		WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(searchWebElement);
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 	
 	/**
@@ -170,7 +191,7 @@ public class LandingPage {
 		return true;
 	 } catch(Exception e) {
 		  ExceptionHandler.throwsException(e);
-		  return false;
+		  throw e;
 	  }
 	}
 	
@@ -199,8 +220,8 @@ public class LandingPage {
 			return true;
 		 } catch(Exception e) {
 			  ExceptionHandler.throwsException(e);
+			  throw e;
 		 }
-		return false;
 	}
 	
 	/**
@@ -209,21 +230,25 @@ public class LandingPage {
 	 * @param inputText - the input text
 	 * @return the web element
 	 */
-	public WebElement returnElementMatchingAutoSuggestedText(String inputText) {
+	public boolean clickElementMatchingAutoSuggestedText(String inputText) {
 		try {
 			logger.debug("*******In returnElementMatchingAutoSuggestedText function*******");
 			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBox);
 			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 			for(WebElement element: autoCompleteSuggestions) {
+				WebDriverUtilities.waitForElementVisibilityUsingFluentWait(element);
+				WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
 				 if(element.getText().equalsIgnoreCase(inputText.toLowerCase()) ||
-				 element.getText().toLowerCase().contains(inputText.toLowerCase())) { 
-					 return element;
+				 element.getText().toLowerCase().contains(inputText.toLowerCase())) {
+					 WebDriverUtilities.performJavaScriptClick(element);
+					 return true;
 				}
 			}
 		 } catch(Exception e) {
 			  ExceptionHandler.throwsException(e);
+			  throw e;
 		}
-		return null;
+		return false;
 	}
 
 	/**
@@ -238,12 +263,14 @@ public class LandingPage {
 			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
 			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 			for(WebElement element: autoCompleteSuggestions) {
+				WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
 				if(element.getText().equalsIgnoreCase(searchText) || element.getText().toLowerCase().contains(searchText.toLowerCase())) {
 						return true;
 				}
 			}
 		 } catch(Exception e) {
 			  ExceptionHandler.throwsException(e);
+			  throw e;
 		}
 		return false;
 	}
@@ -266,7 +293,7 @@ public class LandingPage {
 			}
 	 	} catch(Exception e) {
 		  ExceptionHandler.throwsException(e);
-		  return false;
+		  throw e;
 	  }
 		return false;
 	}
@@ -284,8 +311,8 @@ public class LandingPage {
 			return listOfSearchedProducts.stream().filter(x -> (x.getText().replaceAll("[^A-Za-z0-9 ]+", "").equalsIgnoreCase(searchText) || x.getText().replaceAll("[^A-Za-z0-9 ]+", "").toLowerCase().contains(searchText.toLowerCase()))).map(x -> x.getText().replaceAll("[^A-Za-z0-9 ]+", "")).collect(Collectors.toList());
 		 } catch(Exception e) {
 			  ExceptionHandler.throwsException(e);
+			  throw e;
 		}
-		return null;
 	}
 	
 	/**
@@ -302,8 +329,8 @@ public class LandingPage {
 			return productTitle.getText().replaceAll("[^A-Za-z0-9 ]+", "");
 		 } catch(Exception e) {
 			  ExceptionHandler.throwsException(e);
+			  throw e;
 		}
-		return null;
 	}
 
 }

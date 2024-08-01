@@ -8,6 +8,8 @@ package com.assignment.amazon.utilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.assignment.amazon.exceptions.ExceptionHandler;
+
 /**
  * {@summary}
  * 
@@ -37,19 +39,24 @@ public class TextProcessingUtility {
 		
 		logger.debug("*****In returnExtractedSubProductText function*****");
 		
-		String[] strArray = subProductNameFromWebElement.split("—");
-		
-		StringBuilder sb = new StringBuilder();
-		
-		for(String strTemp:strArray) {
-			if(strTemp.contains("(") && strTemp.contains(",")) {
-				sb.append(strTemp.substring(strTemp.indexOf('('), strTemp.indexOf(','))).append(')');
-			} else {
-				sb.append(strTemp);
+		try {
+			String[] strArray = subProductNameFromWebElement.split("—");
+			
+			StringBuilder sb = new StringBuilder();
+			
+			for(String strTemp:strArray) {
+				if(strTemp.contains("(") && strTemp.contains(",")) {
+					sb.append(strTemp.substring(strTemp.indexOf('('), strTemp.indexOf(','))).append(')');
+				} else {
+					sb.append(strTemp);
+				}
 			}
+			
+			return sb.toString();
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
 		}
-		
-		return sb.toString();
 		
 	}
 

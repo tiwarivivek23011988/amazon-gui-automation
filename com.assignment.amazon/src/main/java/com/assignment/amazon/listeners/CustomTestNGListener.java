@@ -76,19 +76,20 @@ public class CustomTestNGListener implements ITestListener {
     public static synchronized ExtentReports createInstance() {
     	logger.debug("*******In createInstance function*******");
     	try {
-    	sparkReporter = new ExtentSparkReporter(System.getProperty("user.dir") + "/test-output/ExtentReport.html");
-        sparkReporter.config().setDocumentTitle("Automation Report");
-        sparkReporter.config().setReportName("Regression Testing");
-        sparkReporter.config().setTheme(Theme.DARK);
-        extent = new ExtentReports();
-        extent.attachReporter(sparkReporter);
-        extent.setSystemInfo("Host Name", RandomUtilities.getHostName());
-        extent.setSystemInfo("Environment", RandomUtilities.getOsName());
-        extent.setSystemInfo("User Name", RandomUtilities.getUserName());
-        extent.setSystemInfo("OS Version", RandomUtilities.getOsVersion());
-        extent.setSystemInfo("OS Architecture", RandomUtilities.getOsArchitecture());
+	    	sparkReporter = new ExtentSparkReporter(System.getProperty("user.dir") + "/test-output/ExtentReport.html");
+	        sparkReporter.config().setDocumentTitle("Automation Report");
+	        sparkReporter.config().setReportName("Regression Testing");
+	        sparkReporter.config().setTheme(Theme.DARK);
+	        extent = new ExtentReports();
+	        extent.attachReporter(sparkReporter);
+	        extent.setSystemInfo("Host Name", RandomUtilities.getHostName());
+	        extent.setSystemInfo("Environment", RandomUtilities.getOsName());
+	        extent.setSystemInfo("User Name", RandomUtilities.getUserName());
+	        extent.setSystemInfo("OS Version", RandomUtilities.getOsVersion());
+	        extent.setSystemInfo("OS Architecture", RandomUtilities.getOsArchitecture());
     	} catch(Exception e) {
     		ExceptionHandler.throwsException(e);
+    		throw e;
     	}
         return extent;
     }
@@ -122,7 +123,7 @@ public class CustomTestNGListener implements ITestListener {
     @Override
     public synchronized void onTestSuccess(ITestResult result) {
     	logger.debug("*******In onTestSuccess function*******");
-       extentTest.get().log(Status.PASS, "Test Passed");
+        extentTest.get().log(Status.PASS, "Test Passed");
     }
     
     /**
@@ -133,21 +134,30 @@ public class CustomTestNGListener implements ITestListener {
     @Override
     public synchronized void onTestFailure(ITestResult result) {
        logger.debug("*******In onTestFailure function*******");
+       Throwable throwable = result.getThrowable();
+       if (throwable != null) {
+           ExceptionHandler.throwsException((Exception) throwable);
+       }
        extentTest.get().log(Status.FAIL, "Test Failed");
        extentTest.get().log(Status.FAIL, result.getThrowable());
-       if(CustomWebDriverManager.getDriver() != null) {
-           TakesScreenshot scrShot =((TakesScreenshot)CustomWebDriverManager.getDriver());
-           File SrcFile=scrShot.getScreenshotAs(OutputType.FILE);
-           String fileName="target/"+result.getName()+LocalTime.now().toString()+".png";
-           try {
-			FileUtils.copyFile(SrcFile, new File(fileName));
-			} catch (IOException e) {
-				ExceptionHandler.throwsException(e);
-			}
-           CustomTestNGListener.extentTest.get().log(Status.FAIL, "Step failed: ", 
-               			MediaEntityBuilder.createScreenCaptureFromPath(fileName).build());
-          
-           }
+       try {
+	       if(CustomWebDriverManager.getDriver() != null) {
+	           TakesScreenshot scrShot =((TakesScreenshot)CustomWebDriverManager.getDriver());
+	           File SrcFile=scrShot.getScreenshotAs(OutputType.FILE);
+	           String fileName="target/"+result.getName()+LocalTime.now().toString()+".png";
+	           try {
+				FileUtils.copyFile(SrcFile, new File(fileName));
+				} catch (IOException e) {
+					ExceptionHandler.throwsException(e);
+				}
+	           CustomTestNGListener.extentTest.get().log(Status.FAIL, "Step failed: ", 
+	               			MediaEntityBuilder.createScreenCaptureFromPath(fileName).build());
+	          
+	           }
+       } catch(Exception e) {
+    	   ExceptionHandler.throwsException(e);
+    	   throw e;
+       }
     }
 
     /**
@@ -292,6 +302,7 @@ public class CustomTestNGListener implements ITestListener {
         }
         } catch(Exception e) {
         	ExceptionHandler.throwsException(e);
+        	throw e;
         }
     }
  }

@@ -56,8 +56,12 @@ public class RemoteDriverManager implements AbstractDriverFunction<WebDriver,Mut
 	@Override
 	public synchronized MutableCapabilities getCapabilities() {
 		logger.debug("*******In getCapabilities function of RemoteDriverManager class*******");
-		System.out.println("<= Browser Name Is =>" +WebDriverUtilities.browserName.get());
-		return DriverOptionsFactory.getOptions(WebDriverUtilities.browserName.get());
+		try {
+			return DriverOptionsFactory.getOptions(WebDriverUtilities.browserName.get());
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 
 }

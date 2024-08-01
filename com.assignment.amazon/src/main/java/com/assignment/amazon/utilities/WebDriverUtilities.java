@@ -2,13 +2,16 @@
  * @author Vivek Tiwari
  * 
  */
+
 package com.assignment.amazon.utilities;
 
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -53,11 +56,17 @@ public final class WebDriverUtilities {
 	private static final Logger logger = LogManager.getLogger(WebDriverUtilities.class);
 	
 	/** The json parser object */
-	public static JsonParser jsonParser = new JsonParser();
+	public static JsonParserUtility jsonParser = new JsonParserUtility();
 	
 	/** The file path object */
 	public static String filePath = FileSearchUtility.searchFile("src/test/resources", "data.json");
 	
+	// Map to store the PIDs of the browser processes for each thread
+    public static final Map<Thread, List<Long>> pidMap = new HashMap<>();
+
+ // Map to store the PIDs of the browser processes for each thread
+    public static final List<Long> allPidList = new ArrayList<>();
+    
 	/** The Constant hashMap reference */
 	public static final HashMap<String, ?> hashMap;
 	
@@ -72,7 +81,7 @@ public final class WebDriverUtilities {
 	
 	/** Static block initialization of object references.*/
 	static {
-		jsonParser = new JsonParser();
+		jsonParser = new JsonParserUtility();
 		filePath = FileSearchUtility.searchFile("src/test/resources", "data.json");
 		hashMap = jsonParser.parseJson(filePath);
 		browserNames=(List<?>) hashMap.get("browserName");
@@ -87,14 +96,14 @@ public final class WebDriverUtilities {
 	public static synchronized void browserCounter() {
 		try {
 		logger.debug("*******In browserCounter method*******" +"\n"+Thread.currentThread().getName());
-		int counter = ParallelCounter.getCounter();
+		int counter = ParallelCounterUtility.getCounter();
 		if(counter < WebDriverUtilities.browserNames.size()) {
 			browserName.set((String) WebDriverUtilities.browserNames.get(counter));
 			logger.info("Counter Value Is => " +counter);
 			logger.info("Browser Name Is => " +browserName.get());
-			ParallelCounter.incrementCounter();
+			ParallelCounterUtility.incrementCounter();
 		} else {
-			ParallelCounter.resetCounter();
+			ParallelCounterUtility.resetCounter();
 			browserCounter();
 		}
 		} catch(Exception e) {
@@ -109,7 +118,7 @@ public final class WebDriverUtilities {
 	 */
 	public static synchronized int decrementCounter() {
 		logger.debug("*******In decrementCounter method*******");
-		return ParallelCounter.decrementCounter();
+		return ParallelCounterUtility.decrementCounter();
 	}
 	
 	/**
@@ -119,7 +128,7 @@ public final class WebDriverUtilities {
 	 */
 	public static synchronized int getCounter() {	
 		logger.debug("*******In getCounter method*******");
-		return ParallelCounter.getCounter();
+		return ParallelCounterUtility.getCounter();
 	}
 	
 	/**
@@ -129,7 +138,7 @@ public final class WebDriverUtilities {
 	 */
 	public static synchronized int getScenarioCounter() {
 		logger.debug("*******In getScenarioCounter method*******");
-		return ParallelCounter.scenarioCounter.get();
+		return ParallelCounterUtility.scenarioCounter.get();
 	}
 	
 	/**
@@ -137,7 +146,7 @@ public final class WebDriverUtilities {
 	 */
 	public static synchronized void resetCounter() {
 		logger.debug("*******In resetCounter method*******");
-		ParallelCounter.resetCounter();
+		ParallelCounterUtility.resetCounter();
 	}
 	
 	/**
@@ -164,10 +173,11 @@ public final class WebDriverUtilities {
 			case "remote" -> new RemoteDriverManager().getDriver();
 			default -> throw new IllegalArgumentException("Unexpected value: " + hashMap.get("runType").toString().toLowerCase());
 			};
-			/**
-			 *  This is required for firefox due to existing compatibility issues with latest version of firefox
-			 */
+		    
+			pidMap.put(Thread.currentThread(), ProcessManagementUtility.getBrowserProcessPID(driver, browserName.get()));
+		    
 			return driver;
+		
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
@@ -558,7 +568,7 @@ public final class WebDriverUtilities {
 	public static void keyPressEventUsingActionsSendKeys(Keys key) {
 		logger.debug("*******In keyPressEventUsingActionsSendKeys method*******");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
-		actions.sendKeys(key).pause(Duration.ofSeconds(1)).build().perform();
+		actions.sendKeys(key).pause(Duration.ofMillis(20)).build().perform();
 	}
 	
 	/**

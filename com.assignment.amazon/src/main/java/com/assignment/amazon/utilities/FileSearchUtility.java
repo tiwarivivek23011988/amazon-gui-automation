@@ -52,8 +52,8 @@ public class FileSearchUtility {
         return searchFileRecursive(directory, fileName);
     	} catch(Exception e) {
     		ExceptionHandler.throwsException(e);
+    		throw e;
     	}
-    	return null;
     }
 
     /**
@@ -92,6 +92,7 @@ public class FileSearchUtility {
 	        }
     	} catch(Exception e) {
     		ExceptionHandler.throwsException(e);
+    		throw e;
     	}
         /**
          *  If the file is not found in the current directory and its sub-directories, return null

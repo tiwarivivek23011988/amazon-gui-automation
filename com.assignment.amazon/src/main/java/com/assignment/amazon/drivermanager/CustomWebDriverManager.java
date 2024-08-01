@@ -2,6 +2,7 @@
  * @author Vivek Tiwari
  * 
  */
+
 package com.assignment.amazon.drivermanager;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +39,12 @@ public class CustomWebDriverManager {
      */
     public static WebDriver getDriver() {
     	logger.debug("*******In getDriver function of CustomWebDriverManager class*******");
-        return driver.get();
+    	try {
+    		return driver.get();
+    	} catch(Exception e) {
+    		ExceptionHandler.throwsException(e);
+			throw e;
+    	}
     }
 
     /**
@@ -48,7 +54,12 @@ public class CustomWebDriverManager {
      */
     public static void setDriver(WebDriver driverInstance) {
     	logger.debug("*******In setDriver function of CustomWebDriverManager class*******");
-        driver.set(driverInstance);
+    	try {
+    		driver.set(driverInstance);
+    	} catch(Exception e) {
+    		ExceptionHandler.throwsException(e);
+			throw e;
+    	}
     }
 
     /**
@@ -56,13 +67,14 @@ public class CustomWebDriverManager {
      */
     public static void removeDriver() {
     	try {
-    	logger.debug("*******In removeDriver function of CustomWebDriverManager class*******");
-        if (driver.get() != null) {
-            driver.get().quit();
-            driver.remove();
-        }
+	    	logger.debug("*******In removeDriver function of CustomWebDriverManager class*******");
+	        if (driver.get() != null) {
+	            driver.get().quit();
+	            driver.remove();
+	        }
     	} catch(Exception e) {
     		ExceptionHandler.throwsException(e);
+    		throw e;
     	}
     }
 }

@@ -11,6 +11,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 
+import com.assignment.amazon.exceptions.ExceptionHandler;
+
 /**
  * 
  * {@summary}
@@ -35,7 +37,12 @@ public class SafariDriverManager implements AbstractDriverFunction<WebDriver,Saf
 	@Override
 	public synchronized WebDriver getDriver() {
 		logger.debug("*******In getDriver function of SafariDriverManager class*******");
-		return new SafariDriver(getCapabilities());
+		try {
+			return new SafariDriver(getCapabilities());
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 
 	/**
@@ -46,7 +53,12 @@ public class SafariDriverManager implements AbstractDriverFunction<WebDriver,Saf
 	@Override
 	public SafariOptions getCapabilities() {
 		logger.debug("*******In getCapabilities function of SafariDriverManager class*******");
-		return DriverOptionsFactory.getSafariOptions();
+		try {
+			return DriverOptionsFactory.getSafariOptions();
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 
 }

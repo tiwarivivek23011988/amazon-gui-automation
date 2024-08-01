@@ -24,12 +24,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * This is a utility class used to parse any json data or
  * configuration file.
  * 
- * @see JsonParser
+ * @see JsonParserUtility
  */
-public class JsonParser {
+public class JsonParserUtility {
 	
 	/** The Constant logger. */
-	private static final Logger logger = LogManager.getLogger(JsonParser.class);
+	private static final Logger logger = LogManager.getLogger(JsonParserUtility.class);
 	
 	/**
 	 * Parses the json data/configuration file.

@@ -14,6 +14,8 @@ import org.testng.IAnnotationTransformer;
 import org.testng.IRetryAnalyzer;
 import org.testng.annotations.ITestAnnotation;
 
+import com.assignment.amazon.exceptions.ExceptionHandler;
+
 /**
  * {@summary}
  * 
@@ -42,8 +44,13 @@ public class AnnotationTransformer implements IAnnotationTransformer {
     public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
     	logger.debug("*******In transform function of AnnotationTransformer class*******");
         Class<? extends IRetryAnalyzer> retry = annotation.getRetryAnalyzerClass();
-        if (retry == null) {
-            annotation.setRetryAnalyzer((Class<? extends IRetryAnalyzer>) CustomRetryAnalyser.class);
+        try {
+	        if (retry == null) {
+	            annotation.setRetryAnalyzer((Class<? extends IRetryAnalyzer>) CustomRetryAnalyser.class);
+	        }
+        } catch(Exception e) {
+        	ExceptionHandler.throwsException(e);
+        	throw e;
         }
     }
 }

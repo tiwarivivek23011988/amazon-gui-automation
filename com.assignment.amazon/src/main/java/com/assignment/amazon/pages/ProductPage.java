@@ -15,6 +15,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import com.assignment.amazon.drivermanager.CustomWebDriverManager;
+import com.assignment.amazon.exceptions.ExceptionHandler;
 import com.assignment.amazon.utilities.TextProcessingUtility;
 import com.assignment.amazon.utilities.WebDriverUtilities;
 
@@ -94,10 +95,15 @@ public class ProductPage {
 	 * @return true, if successful
 	 */
 	public boolean clickOnVisitAppleStoreLink() {
-		logger.debug("*****In clickOnVisitAppleStoreLink function*****");
-		WebDriverUtilities.waitForElementVisibilityUsingFluentWait(visitAppleStore);
-		WebDriverUtilities.scrollToViewAndClick(visitAppleStore);
-		return true;
+		try {
+			logger.debug("*****In clickOnVisitAppleStoreLink function*****");
+			WebDriverUtilities.waitForElementVisibilityUsingFluentWait(visitAppleStore);
+			WebDriverUtilities.scrollToViewAndClick(visitAppleStore);
+			return true;
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 	
 	/**
@@ -108,33 +114,38 @@ public class ProductPage {
 	 * 
 	 */
 	public boolean clickOnAppleWatchLink(String productType) {
-		logger.debug("*****In clickOnAppleWatchLink function*****");
 		boolean flag=false;
-		for(WebElement element: productsTypeListFromMainPage) {
-			try {
-				WebDriverUtilities.waitForElementVisibilityUsingFluentWait(element);
-				if(element.getText().equalsIgnoreCase(productType)) {
-					WebDriverUtilities.scrollToView(element);
+		try {
+			logger.debug("*****In clickOnAppleWatchLink function*****");
+			for(WebElement element: productsTypeListFromMainPage) {
+				try {
 					WebDriverUtilities.waitForElementVisibilityUsingFluentWait(element);
-					WebDriverUtilities.performJavaScriptClick(element);
-					flag=true;
-					break;
-				}
-			} catch(Exception e) {
-				CustomWebDriverManager.getDriver().navigate().refresh();
-				continue;
-			}
-		}
-		if(!flag) {
-			WebDriverUtilities.waitForElementVisibilityUsingFluentWait(moreOrCategory);
-			if(moreOrCategory.isEnabled() && moreOrCategory.isDisplayed()) {
-				if(moreOrCategory.getText().equalsIgnoreCase("more")
-						|| moreOrCategory.getText().equalsIgnoreCase("categories")) {
-					WebDriverUtilities.scrollToView(moreOrCategory);
-					WebDriverUtilities.performJavaScriptClick(moreOrCategory);
-					flag=true;
+					if(element.getText().equalsIgnoreCase(productType)) {
+						WebDriverUtilities.scrollToView(element);
+						WebDriverUtilities.waitForElementVisibilityUsingFluentWait(element);
+						WebDriverUtilities.performJavaScriptClick(element);
+						flag=true;
+						break;
+					}
+				} catch(Exception e) {
+					CustomWebDriverManager.getDriver().navigate().refresh();
+					continue;
 				}
 			}
+			if(!flag) {
+				WebDriverUtilities.waitForElementVisibilityUsingFluentWait(moreOrCategory);
+				if(moreOrCategory.isEnabled() && moreOrCategory.isDisplayed()) {
+					if(moreOrCategory.getText().equalsIgnoreCase("more")
+							|| moreOrCategory.getText().equalsIgnoreCase("categories")) {
+						WebDriverUtilities.scrollToView(moreOrCategory);
+						WebDriverUtilities.performJavaScriptClick(moreOrCategory);
+						flag=true;
+					}
+				}
+			}
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
 		}
 		return flag;
 	}
@@ -150,6 +161,7 @@ public class ProductPage {
 	public boolean clickOnProductSublistElement(String productName, String subProductName) {
 		logger.debug("*****In clickOnProductSublistElement function*****");
 		boolean flag=false;
+		try {
 		for(WebElement element: allProductTypesSublist)
 		try {
 			if(element.getText().equalsIgnoreCase(subProductName)) {
@@ -196,6 +208,10 @@ public class ProductPage {
 			}
 		}
 		return flag;
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 
 	/**
@@ -207,7 +223,7 @@ public class ProductPage {
 	 */
 	public boolean verifyProductSubTypeText(String productName) {
 		logger.debug("*****In verifyProductSubTypeText function*****");
-		
+		try {
 		WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(allElementsHeaderNameForVerification);
 		
 		for(WebElement element: allElementsHeaderNameForVerification) {
@@ -222,6 +238,10 @@ public class ProductPage {
 			}
 		}
 		return false;
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 	
 	/**
@@ -234,22 +254,27 @@ public class ProductPage {
 	public boolean verifyQuickLookAndClickOnIt(String productName) {
 			logger.debug("*****In verifyQuickLookAndClickOnIt function*****");
 			int i=0;
-			for(WebElement element: allQuickSearchButtonWebElements) {
-				try {
-					WebElement header = allElementsHeaderNameForVerification.get(i);
-					WebDriverUtilities.waitForElementVisibilityUsingFluentWait(header);
-					WebDriverUtilities.scrollToView(header);
-					String extractedText=TextProcessingUtility.returnExtractedSubProductText(header.getText());
-					if(productName.equalsIgnoreCase(extractedText)) {
-						WebDriverUtilities.scrollToView(element);
-						WebDriverUtilities.performJavaScriptClick(element);;
-						return true;
+			try {
+				for(WebElement element: allQuickSearchButtonWebElements) {
+					try {
+						WebElement header = allElementsHeaderNameForVerification.get(i);
+						WebDriverUtilities.waitForElementVisibilityUsingFluentWait(header);
+						WebDriverUtilities.scrollToView(header);
+						String extractedText=TextProcessingUtility.returnExtractedSubProductText(header.getText());
+						if(productName.equalsIgnoreCase(extractedText)) {
+							WebDriverUtilities.scrollToView(element);
+							WebDriverUtilities.performJavaScriptClick(element);;
+							return true;
+						}
+					} catch(Exception e) {
+						continue;
 					}
-				} catch(Exception e) {
-					continue;
 				}
+				return false;
+			} catch(Exception e) {
+				ExceptionHandler.throwsException(e);
+				throw e;
 			}
-			return false;
 		}
 	
 	/**
@@ -261,15 +286,20 @@ public class ProductPage {
 	 */
 	public boolean mouseHoverOnImageAndVerifyMagnifiedImage(String productName) {
 		logger.debug("*****In mouseHoverOnImageAndVerifyMagnifiedImage function*****");
-		
-		WebDriverUtilities.waitForElementVisibilityUsingFluentWait(productToHoverOn);
-		
-		WebDriverUtilities.scrollToView(productToHoverOn);
-		
-		WebDriverUtilities.moveToElementUsingActions(productToHoverOn);
-		
-		WebDriverUtilities.waitForElementVisibilityUsingFluentWait(imageMagnifierViewOfProduct);
-
-		return imageMagnifierViewOfProduct.isDisplayed();
+		try {
+			WebDriverUtilities.waitForElementVisibilityUsingFluentWait(productToHoverOn);
+			
+			WebDriverUtilities.scrollToView(productToHoverOn);
+			
+			WebDriverUtilities.moveToElementUsingActions(productToHoverOn);
+			
+			WebDriverUtilities.waitForElementVisibilityUsingFluentWait(imageMagnifierViewOfProduct);
+	
+			return imageMagnifierViewOfProduct.isDisplayed();
+			
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 }

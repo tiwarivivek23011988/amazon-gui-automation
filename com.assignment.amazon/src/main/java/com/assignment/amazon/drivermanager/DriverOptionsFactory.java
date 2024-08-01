@@ -46,19 +46,19 @@ public class DriverOptionsFactory {
 	 */
 	public static MutableCapabilities getOptions(String browser) {
 		try {
-		logger.debug("*******In getOptions function*******");
-        return switch (browser.toLowerCase()) {
-            case "chrome" -> getChromeOptions();
-            case "firefox" -> getFirefoxOptions();
-            case "safari" -> getSafariOptions();
-            case "explorer" -> getInternetExplorerOptions();
-            case "edge" -> getEdgeOptions();
-            default -> throw new IllegalArgumentException("Browser type not supported: " + browser);
-        };
+			logger.debug("*******In getOptions function*******");
+	        return switch (browser.toLowerCase()) {
+	            case "chrome" -> getChromeOptions();
+	            case "firefox" -> getFirefoxOptions();
+	            case "safari" -> getSafariOptions();
+	            case "explorer" -> getInternetExplorerOptions();
+	            case "edge" -> getEdgeOptions();
+	            default -> throw new IllegalArgumentException("Browser type not supported: " + browser);
+	        };
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
+			throw e;
 		}
-		return null;
     }
 
     /**
@@ -68,19 +68,19 @@ public class DriverOptionsFactory {
      */
     static ChromeOptions getChromeOptions() {
     	try {
-    	logger.debug("*******In getChromeOptions function*******");
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--start-maximized");
-        options.addArguments("--incognito");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.setCapability(CapabilityType.BROWSER_NAME, "chrome");
-        return options;
+	    	logger.debug("*******In getChromeOptions function*******");
+	        ChromeOptions options = new ChromeOptions();
+	        options.addArguments("--start-maximized");
+	        options.addArguments("--incognito");
+	        options.addArguments("--disable-gpu");
+	        options.addArguments("--no-sandbox");
+	        options.addArguments("--disable-dev-shm-usage");
+	        options.setCapability(CapabilityType.BROWSER_NAME, "chrome");
+	        return options;
 	    } catch(Exception e) {
 			ExceptionHandler.throwsException(e);
+			throw e;
 		}
-    	return null;
     }
 
     /**
@@ -90,17 +90,17 @@ public class DriverOptionsFactory {
      */
     static FirefoxOptions getFirefoxOptions() {
     	try {
-    	logger.debug("*******In getFirefoxOptions function*******");
-    	FirefoxProfile profile = new FirefoxProfile();
-        FirefoxOptions options = new FirefoxOptions();
-        options.addPreference("browser.privatebrowsing.autostart", true);
-        options.setProfile(profile);
-        options.setCapability(CapabilityType.BROWSER_NAME, "firefox");
-        return options;
+	    	logger.debug("*******In getFirefoxOptions function*******");
+	    	FirefoxProfile profile = new FirefoxProfile();
+	        FirefoxOptions options = new FirefoxOptions();
+	        options.addPreference("browser.privatebrowsing.autostart", true);
+	        options.setProfile(profile);
+	        options.setCapability(CapabilityType.BROWSER_NAME, "firefox");
+	        return options;
 	    } catch(Exception e) {
 			ExceptionHandler.throwsException(e);
+			throw e;
 		}
-    	return null;
     }
 
     /**
@@ -110,14 +110,14 @@ public class DriverOptionsFactory {
      */
     static SafariOptions getSafariOptions() {
     	try {
-    	logger.debug("*******In getSafariOptions function*******");
-        SafariOptions options = new SafariOptions();
-        options.setCapability(CapabilityType.BROWSER_NAME, "Safari");
-        return options;
+	    	logger.debug("*******In getSafariOptions function*******");
+	        SafariOptions options = new SafariOptions();
+	        options.setCapability(CapabilityType.BROWSER_NAME, "Safari");
+	        return options;
 	    } catch(Exception e) {
 			ExceptionHandler.throwsException(e);
+			throw e;
 		}
-    	return null;
     }
 
     /**
@@ -127,19 +127,19 @@ public class DriverOptionsFactory {
      */
     static InternetExplorerOptions getInternetExplorerOptions() {
     	try {
-    	logger.debug("*******In getInternetExplorerOptions function*******");
-        InternetExplorerOptions options = new InternetExplorerOptions();
-        options.setCapability("enablePersistentHover", true);
-        options.setCapability("nativeEvents", true);
-        options.setCapability("ignoreProtectedModeSettings", true);
-        options.setCapability("ignoreZoomSetting", true);
-        options.setCapability("requireWindowFocus", true);
-        options.setCapability("ie.ensureCleanSession", true);
-        return options;
+	    	logger.debug("*******In getInternetExplorerOptions function*******");
+	        InternetExplorerOptions options = new InternetExplorerOptions();
+	        options.setCapability("enablePersistentHover", true);
+	        options.setCapability("nativeEvents", true);
+	        options.setCapability("ignoreProtectedModeSettings", true);
+	        options.setCapability("ignoreZoomSetting", true);
+	        options.setCapability("requireWindowFocus", true);
+	        options.setCapability("ie.ensureCleanSession", true);
+	        return options;
     	} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
+			throw e;
 		}
-    	return null;
     }
     
     /**
@@ -149,16 +149,16 @@ public class DriverOptionsFactory {
      */
     static EdgeOptions getEdgeOptions() {
     	try {
-    	logger.debug("*******In getInternetExplorerOptions function*******");
-        EdgeOptions options = new EdgeOptions();
-        options.addArguments("--disable-notifications");
-        options.addArguments("--disable-popup-blocking");
-        options.addArguments("-inprivate");
-        return options;
+	    	logger.debug("*******In getInternetExplorerOptions function*******");
+	        EdgeOptions options = new EdgeOptions();
+	        options.addArguments("--disable-notifications");
+	        options.addArguments("--disable-popup-blocking");
+	        options.addArguments("-inprivate");
+	        return options;
     	} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
+			throw e;
 		}
-    	return null;
     }
 	
 }

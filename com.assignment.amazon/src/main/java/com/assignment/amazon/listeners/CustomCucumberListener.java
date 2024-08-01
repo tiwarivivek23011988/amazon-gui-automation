@@ -54,11 +54,16 @@ public class CustomCucumberListener implements ConcurrentEventListener {
     @Override
     public synchronized void setEventPublisher(EventPublisher publisher) {
     	logger.debug("*******In setEventPublisher function*******");
-        publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
-        publisher.registerHandlerFor(TestStepStarted.class, this::handleTestStepStarted);
-        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
-        publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
-    }
+    	try {
+	        publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
+	        publisher.registerHandlerFor(TestStepStarted.class, this::handleTestStepStarted);
+	        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
+	        publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
+    		} catch(Exception e) {
+    			ExceptionHandler.throwsException(e);
+    			throw e;
+    		}
+    	}
     
     /**
      * Handle test case started event.
@@ -82,6 +87,7 @@ public class CustomCucumberListener implements ConcurrentEventListener {
          CustomTestNGListener.extentTest.get().log(Status.INFO, "Browser Name: " + WebDriverUtilities.browserName.get().toUpperCase());
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
+			throw e;
 		}
     }
 
@@ -100,6 +106,7 @@ public class CustomCucumberListener implements ConcurrentEventListener {
         }
     	} catch(Exception e) {
     		ExceptionHandler.throwsException(e);
+    		throw e;
     	}
     }
 
@@ -110,25 +117,25 @@ public class CustomCucumberListener implements ConcurrentEventListener {
      */
     private synchronized void handleTestStepFinished(TestStepFinished event) {
     	try {
-    	logger.debug("*******In handleTestStepFinished Publisher Event*******");
-    	if (event.getTestStep() instanceof PickleStepTestStep) {
-            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-            String stepText = testStep.getStep().getKeyword() + testStep.getStep().getText();
-            if (event.getResult().getStatus().is(io.cucumber.plugin.event.Status.PASSED)) {
-            	CustomTestNGListener.extentTest.get().log(Status.PASS, "Step passed: " + stepText);
-            } else if (event.getResult().getStatus().is(io.cucumber.plugin.event.Status.FAILED)) {
-                if(CustomWebDriverManager.getDriver() != null) {
-                	TakesScreenshot scrShot =((TakesScreenshot)CustomWebDriverManager.getDriver());
-                	File SrcFile=scrShot.getScreenshotAs(OutputType.FILE);
-                	String fileName="target/"+stepText.replaceAll("[^a-zA-Z]","")+".png";
-                	FileUtils.copyFile(SrcFile, new File(fileName));
-                	CustomTestNGListener.extentTest.get().log(Status.FAIL, "Step failed: " + stepText, 
-                			MediaEntityBuilder.createScreenCaptureFromPath(fileName).build());
-                }
-            } else {
-            	CustomTestNGListener.extentTest.get().log(Status.SKIP, "Step skipped: " + stepText);
-            }
-        }
+	    	logger.debug("*******In handleTestStepFinished Publisher Event*******");
+	    	if (event.getTestStep() instanceof PickleStepTestStep) {
+	            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
+	            String stepText = testStep.getStep().getKeyword() + testStep.getStep().getText();
+	            if (event.getResult().getStatus().is(io.cucumber.plugin.event.Status.PASSED)) {
+	            	CustomTestNGListener.extentTest.get().log(Status.PASS, "Step passed: " + stepText);
+	            } else if (event.getResult().getStatus().is(io.cucumber.plugin.event.Status.FAILED)) {
+	                if(CustomWebDriverManager.getDriver() != null) {
+	                	TakesScreenshot scrShot =((TakesScreenshot)CustomWebDriverManager.getDriver());
+	                	File SrcFile=scrShot.getScreenshotAs(OutputType.FILE);
+	                	String fileName="target/"+stepText.replaceAll("[^a-zA-Z]","")+".png";
+	                	FileUtils.copyFile(SrcFile, new File(fileName));
+	                	CustomTestNGListener.extentTest.get().log(Status.FAIL, "Step failed: " + stepText, 
+	                			MediaEntityBuilder.createScreenCaptureFromPath(fileName).build());
+	                }
+	            } else {
+	            	CustomTestNGListener.extentTest.get().log(Status.SKIP, "Step skipped: " + stepText);
+	            }
+	    	}
     	} catch(Exception e) {
     		ExceptionHandler.throwsException(e);
     	}
@@ -149,8 +156,12 @@ public class CustomCucumberListener implements ConcurrentEventListener {
         } else {
         	CustomTestNGListener.extentTest.get().log(Status.SKIP, "Scenario skipped");
         }
+        
+        logger.info("Web-Driver specific browser process removed successfully.!");
+        
     	} catch(Exception e) {
     		ExceptionHandler.throwsException(e);
+    		throw e;
     	}
     }
 }

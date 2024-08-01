@@ -9,6 +9,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.IExecutionListener;
 
+import com.assignment.amazon.configuration.Setup;
+import com.assignment.amazon.exceptions.ExceptionHandler;
+
 /**
  * {@summary}
  * 
@@ -33,7 +36,12 @@ public class CustomExecutionListener implements IExecutionListener{
   	@Override
 	  public void onExecutionStart() {
 		logger.debug("*******In onExecutionStart function*******");
-	    CustomTestNGListener.createInstance();
+		try {
+			CustomTestNGListener.createInstance();
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	  }
 
 	/**
@@ -42,6 +50,12 @@ public class CustomExecutionListener implements IExecutionListener{
   	@Override
 	  public void onExecutionFinish() {
 		logger.debug("*******onExecutionFinish function*******");
-		CustomTestNGListener.extentReportPreProcessing();
+		try {
+			CustomTestNGListener.extentReportPreProcessing();
+			Setup.killDanglingBrowserProcessReferences();
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	  }
 }

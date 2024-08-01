@@ -9,7 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.annotations.DataProvider;
 
-import com.assignment.amazon.utilities.ParallelCounter;
+import com.assignment.amazon.exceptions.ExceptionHandler;
+import com.assignment.amazon.utilities.ParallelCounterUtility;
 
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
@@ -45,10 +46,15 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     @DataProvider(parallel = true)
     public Object[][] scenarios() {
 		logger.debug("*******In scenarios function*******");
-		int numOfScenarios=super.scenarios().length;
-		logger.info("Number of Scenarios Are:" +numOfScenarios);
-		ParallelCounter.scenarioCounter.set(numOfScenarios);
-        return super.scenarios();
+		try {
+			int numOfScenarios=super.scenarios().length;
+			logger.info("Number of Scenarios Are:" +numOfScenarios);
+			ParallelCounterUtility.scenarioCounter.set(numOfScenarios);
+	        return super.scenarios();
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
     }
 	
 }

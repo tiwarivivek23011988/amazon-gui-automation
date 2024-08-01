@@ -10,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 
+import com.assignment.amazon.exceptions.ExceptionHandler;
+
 
 /**
  * {@summary}
@@ -45,11 +47,16 @@ public class CustomRetryAnalyser implements IRetryAnalyzer{
     @Override
     public boolean retry(ITestResult result) {
     	logger.debug("*******In retry function*******");
-        if (retryCount < maxRetryCount) {
-            retryCount++;
-            logger.info("Retrying test " + result.getMethod().getMethodName() + " for the " + retryCount + " time.");
-            return true; 
-        }
-        return false;
+    	try {
+	        if (result.getStatus() == ITestResult.FAILURE && retryCount < maxRetryCount) {
+	            retryCount++;
+	            logger.info("Retrying test " + result.getMethod().getMethodName() + " for the " + retryCount + " time.");
+	            return true; 
+	        }
+	        return false;
+    	} catch(Exception e) {
+    		ExceptionHandler.throwsException(e);
+    		throw e;
+    	}
     }
 }

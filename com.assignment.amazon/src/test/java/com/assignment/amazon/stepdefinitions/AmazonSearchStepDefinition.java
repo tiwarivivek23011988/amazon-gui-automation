@@ -48,8 +48,13 @@ public class AmazonSearchStepDefinition {
 	@Given("User navigates to amazon page")
 	public void userNavigatesToAmazonPage() {
 		logger.debug("*******In userNavigatesToAmazonPage function*******" +"\n"+Thread.currentThread().getName());
-		String url = (String) WebDriverUtilities.hashMap.get("url");
-		driver.get(url);
+		try {
+			String url = (String) WebDriverUtilities.hashMap.get("url");
+			driver.get(url);
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 	
 	/**
@@ -62,9 +67,14 @@ public class AmazonSearchStepDefinition {
 	@When("User selects {string} from categories dropdown and types {string}")
 	public void userSelectsCategoryValueAndTypesProductName(String dropdownValue, String productName) {
 		logger.debug("*******In userSelectsCategoryValueAndTypesProductName function*******");
-		boolean isElementSelected = landingPage.selectCategoryFromDropdown(dropdownValue);
-		Assert.assertTrue(isElementSelected);
-		Assert.assertTrue(landingPage.inputTextInSearchBox(productName));
+		try {
+			boolean isElementSelected = landingPage.selectCategoryFromDropdown(dropdownValue);
+			Assert.assertTrue(isElementSelected);
+			Assert.assertTrue(landingPage.inputTextInSearchBox(productName));
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 	
 	/**
@@ -80,6 +90,7 @@ public class AmazonSearchStepDefinition {
 			Assert.assertTrue(flag);
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
+			throw e;
 		}
 	}
 	
@@ -91,9 +102,13 @@ public class AmazonSearchStepDefinition {
 	@Then("User clicks on {string} from auto-complete option thus suggested")
 	public void userClicksOnAutoCompleteSuggestionMatchingProductName(String productName) {
 		logger.debug("*******In userClicksOnAutoCompleteSuggestionMatchingProductName function*******");
-		Assert.assertTrue(landingPage.checkForPresenceOfAutoCompleteSuggestion(productName));
-		WebDriverUtilities.clickOnWebElement(landingPage.returnElementMatchingAutoSuggestedText(productName));
-		
+		try {
+			Assert.assertTrue(landingPage.checkForPresenceOfAutoCompleteSuggestion(productName));
+			Assert.assertTrue(landingPage.clickElementMatchingAutoSuggestedText(productName));
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 	
 	/**
@@ -104,7 +119,12 @@ public class AmazonSearchStepDefinition {
 	@And("User validates that {string} search returns products catalog list")
 	public void userValidatesPresenceOfProductResultsForTheSearchedProduct(String productName) {
 		logger.debug("*******In userValidatesPresenceOfProductResultsForTheSearchedProduct function*******");
-		Assert.assertTrue(landingPage.storeResultsCatalogElementsText(productName).size()>0);
+		try {
+			Assert.assertTrue(landingPage.storeResultsCatalogElementsText(productName).size()>0);
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 	
 	/**
@@ -115,7 +135,12 @@ public class AmazonSearchStepDefinition {
 	@Then("User clicks on the {string} product from resulting product-catalog list")
 	public void userClicksOnTheProductFromResultingProductCatalogList(String productName) {
 		logger.debug("*******In userClicksOnTheProductFromResultingProductCatalogList function*******");
-		Assert.assertTrue(landingPage.clickOnFirstResultFromResultsCatalog(productName));
+		try {
+			Assert.assertTrue(landingPage.clickOnFirstResultFromResultsCatalog(productName));
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 	
 	/**
@@ -130,6 +155,7 @@ public class AmazonSearchStepDefinition {
 			Assert.assertTrue(landingPage.getProductNameFromTitle().toLowerCase().contains(productName.toLowerCase()));
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
+			throw e;
 		}
 	}
 }

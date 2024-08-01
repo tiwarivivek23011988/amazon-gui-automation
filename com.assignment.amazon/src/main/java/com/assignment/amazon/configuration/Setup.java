@@ -4,17 +4,22 @@
  */
 package com.assignment.amazon.configuration;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 
 import com.assignment.amazon.drivermanager.CustomWebDriverManager;
 import com.assignment.amazon.exceptions.ExceptionHandler;
+import com.assignment.amazon.utilities.ProcessManagementUtility;
 import com.assignment.amazon.utilities.WebDriverUtilities;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
+// TODO: Auto-generated Javadoc
 /**
  * {@summary}
  * 
@@ -36,7 +41,7 @@ public class Setup {
 	 * driver initializations.
 	 */
 	@Before
-	public synchronized void setUp() {
+	public void setUp() {
 		logger.debug("*******In setUp Function*******");
 		
 		try {
@@ -73,6 +78,7 @@ public class Setup {
 		} catch(Exception e) {
 			
 			ExceptionHandler.throwsException(e);
+			throw e;
 		}
 		
 	}
@@ -83,14 +89,83 @@ public class Setup {
 	 * browser driver instances.
 	 */
 	@After
-	public synchronized void tearDown() {
+	public void tearDown() {
+		WebDriver driver = CustomWebDriverManager.getDriver();
+		if(driver != null) {
+			try {
+			 
+			 logger.debug("*******In tearDown Function*******");
+			 logger.info("Attempting to delete all cookies and quit the driver.");
+			 driver.manage().deleteAllCookies();
+			 driver.close();
+			 driver.quit();
+			 logger.info("Driver quit successfully.!!");
+			 
+			} catch(Exception e) {
+				
+				logger.error("Exception occurred while quitting the driver: ");
+				ExceptionHandler.throwsException(e);
+				throw e;
+				
+			}finally {
+	            try {
+	                
+	            	CustomWebDriverManager.removeDriver();
+	            	
+	            	List<Long> processIdList = WebDriverUtilities.pidMap.get(Thread.currentThread());
+	            	
+	            	WebDriverUtilities.allPidList.addAll(processIdList);
+	            	
+	                logger.info("Driver removed from ThreadLocal.");
+	                
+	                
+	            } catch (Exception e) {
+	                logger.error("Exception occurred while removing the driver: ");
+	                ExceptionHandler.throwsException(e);
+	                throw e;
+	            }
+	        }
+		} else {
+	        logger.warn("Driver instance is null, no action needed.!!");
+	    }
+	}
+	
+	/**
+	 * Kill dangling browser process references.
+	 * 
+	 */
+	
+	public static void killDanglingBrowserProcessReferences() {
+		
+		logger.debug("*******In killDanglingBrowserProcessReferences function*******");
+    	
 		try {
-		 logger.debug("*******In tearDown Function*******");
-		 CustomWebDriverManager.getDriver().manage().deleteAllCookies();
-		 CustomWebDriverManager.getDriver().quit();
-		 CustomWebDriverManager.removeDriver();
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-		}
+			List<Long> childPids = ProcessManagementUtility.getChildProcessIds(WebDriverUtilities.allPidList);
+			
+			logger.info("Child Process ids are => "+childPids);
+			
+			for(Long pid: childPids) {
+				try {
+		    		ProcessManagementUtility.killProcess(pid);
+		    		logger.info("Killed child process with pid => "+pid+" successfully.!");
+		    		} catch(Exception e) {
+		    			logger.warn("Child Process with id => "+pid+" already killed");
+		        		continue;
+		    		}
+		    	}
+			
+	    	for(Long pid: WebDriverUtilities.allPidList) {
+		    	try {
+		    		ProcessManagementUtility.killProcess(pid);
+		    		logger.info("Killed parent process with pid => "+pid+" successfully.!");
+		    		} catch(Exception e) {
+		    			logger.warn("Parent Process with id => "+pid+" already killed");
+		        		continue;
+		        }
+	    	}
+    	} catch(Exception e) {
+    		ExceptionHandler.throwsException(e);
+    		throw e;
+    	}
 	}
 }

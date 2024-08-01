@@ -11,6 +11,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 
+import com.assignment.amazon.exceptions.ExceptionHandler;
+
 /**
  * {@summary}
  * 
@@ -37,7 +39,12 @@ public class FirefoxDriverManager implements AbstractDriverFunction<WebDriver,Fi
 	@Override
 	public synchronized WebDriver getDriver() {
 		logger.debug("*******In getDriver function of FirefoxDriverManager class*******");
-		return new FirefoxDriver(getCapabilities());
+		try {
+			return new FirefoxDriver(getCapabilities());
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 
 	/**
@@ -50,7 +57,12 @@ public class FirefoxDriverManager implements AbstractDriverFunction<WebDriver,Fi
 	@Override
 	public FirefoxOptions getCapabilities() {
 		logger.debug("*******In getCapabilities function of FirefoxDriverManager class*******");
-		return DriverOptionsFactory.getFirefoxOptions();
+		try {
+			return DriverOptionsFactory.getFirefoxOptions();
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 
 }
