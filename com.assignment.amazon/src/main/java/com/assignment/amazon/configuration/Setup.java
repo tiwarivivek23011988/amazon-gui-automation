@@ -118,7 +118,6 @@ public class Setup {
 	            	
 	                logger.info("Driver removed from ThreadLocal.");
 	                
-	                
 	            } catch (Exception e) {
 	                logger.error("Exception occurred while removing the driver: ");
 	                ExceptionHandler.throwsException(e);
