@@ -41,7 +41,7 @@ public class Setup {
 	 * driver initializations.
 	 */
 	@Before
-	public void setUp() {
+	public synchronized void setUp() {
 		logger.debug("*******In setUp Function*******");
 		
 		try {
@@ -73,6 +73,8 @@ public class Setup {
 		
 		WebDriverUtilities.maximizeBrowserWindow();
 		
+		CustomWebDriverManager.getDriver().manage().deleteAllCookies();
+		
 		logger.debug("*******Scenario Counter Value In Before Hook Is*******" +"\n"+WebDriverUtilities.getScenarioCounter());
 
 		} catch(Exception e) {
@@ -88,15 +90,18 @@ public class Setup {
 	 * like deleting all cookies, removing browser driver and quitting
 	 * browser driver instances.
 	 */
-	@After
-	public void tearDown() {
+	
+	@After(order=2)
+	public synchronized void tearDown() {
 		WebDriver driver = CustomWebDriverManager.getDriver();
-		if(driver != null) {
+		
+		if(driver != null)
+		{
+		synchronized(driver) {
 			try {
 			 
 			 logger.debug("*******In tearDown Function*******");
 			 logger.info("Attempting to delete all cookies and quit the driver.");
-			 driver.manage().deleteAllCookies();
 			 driver.close();
 			 driver.quit();
 			 logger.info("Driver quit successfully.!!");
@@ -117,6 +122,7 @@ public class Setup {
 	            	WebDriverUtilities.allPidList.addAll(processIdList);
 	            	
 	                logger.info("Driver removed from ThreadLocal.");
+	             
 	                
 	            } catch (Exception e) {
 	                logger.error("Exception occurred while removing the driver: ");
@@ -124,16 +130,16 @@ public class Setup {
 	                throw e;
 	            }
 	        }
-		} else {
-	        logger.warn("Driver instance is null, no action needed.!!");
-	    }
+		}
+	  }else {
+		        logger.warn("Driver instance is null, no action needed.!!");
+		   }
 	}
 	
 	/**
 	 * Kill dangling browser process references.
 	 * 
 	 */
-	
 	public static void killDanglingBrowserProcessReferences() {
 		
 		logger.debug("*******In killDanglingBrowserProcessReferences function*******");

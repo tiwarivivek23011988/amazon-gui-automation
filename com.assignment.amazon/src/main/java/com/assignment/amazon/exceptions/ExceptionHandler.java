@@ -36,7 +36,7 @@ public class ExceptionHandler extends Exception {
 		if (e instanceof WebDriverException) {
             logger.error("WebDriverException occurred: {}", e.getMessage(), e);
         } else {
-            logger.error("Java Exception occurred: {}", e.getMessage(), e);
+            logger.error("Java Exception/Error occurred: {}", e.getMessage(), e);
         }
 	}
 

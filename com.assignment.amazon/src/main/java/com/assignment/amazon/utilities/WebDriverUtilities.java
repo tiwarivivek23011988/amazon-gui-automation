@@ -102,10 +102,11 @@ public final class WebDriverUtilities {
 			logger.info("Counter Value Is => " +counter);
 			logger.info("Browser Name Is => " +browserName.get());
 			ParallelCounterUtility.incrementCounter();
-		} else {
+		}  
+		
+		if(ParallelCounterUtility.getCounter()==WebDriverUtilities.browserNames.size()){
 			ParallelCounterUtility.resetCounter();
-			browserCounter();
-		}
+		 }
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
@@ -436,7 +437,7 @@ public final class WebDriverUtilities {
 		try {
 		logger.debug("*******In performElementClickAndHoldUsingActions method*******");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
-		actions.clickAndHold(element).release().build().perform();
+		actions.clickAndHold(element).release().perform();
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 		}
@@ -532,6 +533,21 @@ public final class WebDriverUtilities {
 		
 	}
 	
+	public static void waitUntilAttributeNotEmpty(WebElement element, String attribute) {
+		try {
+			logger.debug("*******In waitUntilTextToBePresentInElementLocated method*******");
+			Wait<WebDriver> wait = new FluentWait<>(CustomWebDriverManager.getDriver())
+	                .withTimeout(Duration.ofSeconds(30))
+	                .pollingEvery(Duration.ofSeconds(1))
+	                .ignoring(Exception.class);
+
+	        wait.until(ExpectedConditions.attributeToBeNotEmpty(element, attribute));
+			} catch(Exception e) {
+				ExceptionHandler.throwsException(e);
+			}
+		
+	}
+	
 	/**
 	 * Actions class with keyDown click and hold
 	 * 
@@ -542,9 +558,18 @@ public final class WebDriverUtilities {
 	public static void keyPressEventUsingActionsClickAndHold(Keys key) {
 		logger.debug("*******In keyPressEventUsingActionsClickAndHold method*******");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
-		actions.keyDown(key).clickAndHold().pause(Duration.ofMillis(5)).build().perform();
+		actions.keyDown(key).clickAndHold().pause(Duration.ofMillis(200)).build().perform();
 	}
 	
+	public static void sendAsyncEventAfterSelectedValue(WebElement dropDownElement, String dropDownValue) {
+		 String script = "var select = arguments[0];" +
+                 "select.value = arguments[1];" +
+                 "var event = new Event('change', { bubbles: true });" +
+                 "select.dispatchEvent(event);";
+
+		 // Execute the script
+		 ((JavascriptExecutor) CustomWebDriverManager.getDriver()).executeScript(script, dropDownElement, dropDownValue);
+	}
 	/**
 	 * Move to element using actions and keyboard key press events
 	 * 
@@ -552,10 +577,16 @@ public final class WebDriverUtilities {
 	 * 
 	 */
 	
-	public static void keyPressEventUsingActionsRelease(WebElement element, Keys key) {
+	public static void keyPressEventUsingActionsRelease(WebElement element, String string) {
 		logger.debug("*******In keyPressEventUsingActionsRelease method*******");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
-		actions.moveToElement(element).sendKeys(key).release().perform();
+		actions.moveToElement(element).sendKeys(string).pause(Duration.ofMillis(100)).build().perform();
+	}
+	
+	public static void keyPressEventUsingActionsChord(Keys key) {
+		logger.debug("*******In keyPressEventUsingActionsRelease method*******");
+		Actions actions = new Actions(CustomWebDriverManager.getDriver());
+		actions.sendKeys(key).clickAndHold().perform();
 	}
 	
 	/**
@@ -565,10 +596,10 @@ public final class WebDriverUtilities {
 	 * 
 	 */
 	
-	public static void keyPressEventUsingActionsSendKeys(Keys key) {
+	public static void keyPressEventUsingActionsSendKeys(Keys Keys) {
 		logger.debug("*******In keyPressEventUsingActionsSendKeys method*******");
 		Actions actions = new Actions(CustomWebDriverManager.getDriver());
-		actions.sendKeys(key).pause(Duration.ofMillis(20)).build().perform();
+		actions.sendKeys(Keys).pause(Duration.ofMillis(20)).build().perform();
 	}
 	
 	/**
@@ -603,10 +634,19 @@ public final class WebDriverUtilities {
 	 * @param - WebElement as element, integer as index of Select drop-down
 	 * 
 	 */
-	public static synchronized void selectByIndexUsingJavascript(WebElement element, int index) {
+	public static synchronized void selectByIndexUsingJavascript(WebElement element, String visibleText) {
 		logger.debug("*******In selectByIndexUsingJavascript method*******");
-		((JavascriptExecutor) CustomWebDriverManager.getDriver()).executeScript(String.format("arguments[0].selectedIndex = %d;",index), element);
-	}
+		((JavascriptExecutor) CustomWebDriverManager.getDriver())
+	    .executeScript("var select = arguments[0];" +
+	                    "for (var i = 0; i < select.options.length; i++) {" +
+	                    "    if (select.options[i].text === arguments[1]) {" +
+	                    "        select.selectedIndex = i;" +
+	                    "        var event = new Event('change', { bubbles: true });" +
+	                    "        select.dispatchEvent(event);" + 
+	                    "        break;" +
+	                    "    }" +
+	                    "}", element, visibleText);
+		}
 	
 	/**
 	 * Select by visible text using Javascript and wait

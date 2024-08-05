@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="AmazonTestSuite" parallel="tests" thread-count="10">
+<suite name="AmazonTestSuite" parallel="methods" thread-count="10">
   <listeners>
   		<listener class-name="com.assignment.amazon.listeners.AnnotationTransformer"/>
         <listener class-name="com.assignment.amazon.listeners.CustomTestNGListener"/>

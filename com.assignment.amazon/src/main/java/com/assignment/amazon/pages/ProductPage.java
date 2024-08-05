@@ -114,8 +114,8 @@ public class ProductPage {
 	 * 
 	 */
 	public boolean clickOnAppleWatchLink(String productType) {
-		boolean flag=false;
-		try {
+			boolean flag=false;
+			try {
 			logger.debug("*****In clickOnAppleWatchLink function*****");
 			for(WebElement element: productsTypeListFromMainPage) {
 				try {
@@ -162,56 +162,56 @@ public class ProductPage {
 		logger.debug("*****In clickOnProductSublistElement function*****");
 		boolean flag=false;
 		try {
-		for(WebElement element: allProductTypesSublist)
-		try {
-			if(element.getText().equalsIgnoreCase(subProductName)) {
-				WebDriverUtilities.scrollToView(element);
-				WebDriverUtilities.performJavaScriptClick(element);
-				flag=true;
-				break;
-			}
-		} catch(Exception e) {
-			continue;
-		}
-		if(!flag) {
-			boolean flagForSideMenu=false;
-			for(WebElement element: productListFromSideMenu) {
-				try {
-				if(element.getText().equalsIgnoreCase(productName)) {
-					WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
+			for(WebElement element: allProductTypesSublist)
+			try {
+				if(element.getText().equalsIgnoreCase(subProductName)) {
 					WebDriverUtilities.scrollToView(element);
 					WebDriverUtilities.performJavaScriptClick(element);
-					flagForSideMenu=true;
+					flag=true;
 					break;
 				}
-				} catch(Exception e) {
-					continue;
-				}
+			} catch(Exception e) {
+				continue;
 			}
-		
-			if(flagForSideMenu) {
-				flag=false;
-				WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(productSubListFromSideMenu);
-				for(WebElement element:productSubListFromSideMenu) {
+			if(!flag) {
+				boolean flagForSideMenu=false;
+				for(WebElement element: productListFromSideMenu) {
 					try {
-					if(element.getText().equalsIgnoreCase(subProductName)) {
+					if(element.getText().equalsIgnoreCase(productName)) {
 						WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
 						WebDriverUtilities.scrollToView(element);
 						WebDriverUtilities.performJavaScriptClick(element);
-						flag=true;
+						flagForSideMenu=true;
 						break;
 					}
 					} catch(Exception e) {
 						continue;
 					}
 				}
+			
+				if(flagForSideMenu) {
+					flag=false;
+					WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(productSubListFromSideMenu);
+					for(WebElement element:productSubListFromSideMenu) {
+						try {
+						if(element.getText().equalsIgnoreCase(subProductName)) {
+							WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
+							WebDriverUtilities.scrollToView(element);
+							WebDriverUtilities.performJavaScriptClick(element);
+							flag=true;
+							break;
+						}
+						} catch(Exception e) {
+							continue;
+						}
+					}
+				}
 			}
-		}
-		return flag;
-		} catch(Exception e) {
+		}catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 			throw e;
 		}
+		return flag;
 	}
 
 	/**
@@ -236,12 +236,12 @@ public class ProductPage {
 			} catch(Exception e) {
 				continue;
 			}
-		}
-		return false;
+		 }
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
 			throw e;
 		}
+		return false;
 	}
 	
 	/**
@@ -255,15 +255,18 @@ public class ProductPage {
 			logger.debug("*****In verifyQuickLookAndClickOnIt function*****");
 			int i=0;
 			try {
+				
 				for(WebElement element: allQuickSearchButtonWebElements) {
 					try {
 						WebElement header = allElementsHeaderNameForVerification.get(i);
 						WebDriverUtilities.waitForElementVisibilityUsingFluentWait(header);
 						WebDriverUtilities.scrollToView(header);
 						String extractedText=TextProcessingUtility.returnExtractedSubProductText(header.getText());
+						logger.info("extractedText is => "+extractedText);
+						logger.info("productName is => "+productName);
 						if(productName.equalsIgnoreCase(extractedText)) {
-							WebDriverUtilities.scrollToView(element);
-							WebDriverUtilities.performJavaScriptClick(element);;
+							WebDriverUtilities.moveToElementUsingActions(element);
+							WebDriverUtilities.performElementClickAndHoldUsingActions(element);
 							return true;
 						}
 					} catch(Exception e) {
@@ -285,8 +288,9 @@ public class ProductPage {
 	 * 
 	 */
 	public boolean mouseHoverOnImageAndVerifyMagnifiedImage(String productName) {
-		logger.debug("*****In mouseHoverOnImageAndVerifyMagnifiedImage function*****");
 		try {
+			logger.debug("*****In mouseHoverOnImageAndVerifyMagnifiedImage function*****");
+
 			WebDriverUtilities.waitForElementVisibilityUsingFluentWait(productToHoverOn);
 			
 			WebDriverUtilities.scrollToView(productToHoverOn);
@@ -301,5 +305,6 @@ public class ProductPage {
 			ExceptionHandler.throwsException(e);
 			throw e;
 		}
+			
 	}
 }

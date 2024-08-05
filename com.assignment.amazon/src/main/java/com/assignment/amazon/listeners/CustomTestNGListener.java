@@ -4,22 +4,18 @@
  */
 package com.assignment.amazon.listeners;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
+import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.w3c.dom.Document;
@@ -30,16 +26,10 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.assignment.amazon.drivermanager.CustomWebDriverManager;
 import com.assignment.amazon.exceptions.ExceptionHandler;
+import com.assignment.amazon.utilities.ExtentManagerUtility;
 import com.assignment.amazon.utilities.FileSearchUtility;
-import com.assignment.amazon.utilities.RandomUtilities;
-import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.MediaEntityBuilder;
-import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.aventstack.extentreports.reporter.configuration.Theme;
 
 /**
  * {@summary}
@@ -58,51 +48,10 @@ public class CustomTestNGListener implements ITestListener {
 	
 	/** The Constant logger. */
 	private static final Logger logger = LogManager.getLogger(CustomTestNGListener.class);
-    
-    /** The extent. */
-    public static ExtentReports extent;
-    
-    /** The spark reporter. */
-    private static ExtentSparkReporter sparkReporter;
-    
-    /** The extent test. */
-    static final ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>();
-    
+   
     /**
      * Creates the instance of extent reports
-     *
-     * @return - the extent reports
-     */
-    public static synchronized ExtentReports createInstance() {
-    	logger.debug("*******In createInstance function*******");
-    	try {
-	    	sparkReporter = new ExtentSparkReporter(System.getProperty("user.dir") + "/test-output/ExtentReport.html");
-	        sparkReporter.config().setDocumentTitle("Automation Report");
-	        sparkReporter.config().setReportName("Regression Testing");
-	        sparkReporter.config().setTheme(Theme.DARK);
-	        extent = new ExtentReports();
-	        extent.attachReporter(sparkReporter);
-	        extent.setSystemInfo("Host Name", RandomUtilities.getHostName());
-	        extent.setSystemInfo("Environment", RandomUtilities.getOsName());
-	        extent.setSystemInfo("User Name", RandomUtilities.getUserName());
-	        extent.setSystemInfo("OS Version", RandomUtilities.getOsVersion());
-	        extent.setSystemInfo("OS Architecture", RandomUtilities.getOsArchitecture());
-    	} catch(Exception e) {
-    		ExceptionHandler.throwsException(e);
-    		throw e;
-    	}
-        return extent;
-    }
     
-    /**
-     * Gets the single instance of CustomTestNGListener.
-     *
-     * @return single instance of CustomTestNGListener
-     */
-    public synchronized static ExtentReports getInstance() {
-    	logger.debug("*******In getInstance function*******");
-        return extent;
-    }
 
     /**
      * On test start.
@@ -110,9 +59,10 @@ public class CustomTestNGListener implements ITestListener {
      * @param result - the result
      */
     @Override
-    public synchronized void onTestStart(ITestResult result) {
+    public void onTestStart(ITestResult result) {
     	logger.debug("*******Test Case started!*******");
     	logger.debug("*******In onTestStart function*******");
+    	
     }
 
     /**
@@ -121,9 +71,8 @@ public class CustomTestNGListener implements ITestListener {
      * @param result - the result
      */
     @Override
-    public synchronized void onTestSuccess(ITestResult result) {
+    public void onTestSuccess(ITestResult result) {
     	logger.debug("*******In onTestSuccess function*******");
-        extentTest.get().log(Status.PASS, "Test Passed");
     }
     
     /**
@@ -132,32 +81,8 @@ public class CustomTestNGListener implements ITestListener {
      * @param result - the result
      */
     @Override
-    public synchronized void onTestFailure(ITestResult result) {
+    public void onTestFailure(ITestResult result) {
        logger.debug("*******In onTestFailure function*******");
-       Throwable throwable = result.getThrowable();
-       if (throwable != null) {
-           ExceptionHandler.throwsException((Exception) throwable);
-       }
-       extentTest.get().log(Status.FAIL, "Test Failed");
-       extentTest.get().log(Status.FAIL, result.getThrowable());
-       try {
-	       if(CustomWebDriverManager.getDriver() != null) {
-	           TakesScreenshot scrShot =((TakesScreenshot)CustomWebDriverManager.getDriver());
-	           File SrcFile=scrShot.getScreenshotAs(OutputType.FILE);
-	           String fileName="target/"+result.getName()+LocalTime.now().toString()+".png";
-	           try {
-				FileUtils.copyFile(SrcFile, new File(fileName));
-				} catch (IOException e) {
-					ExceptionHandler.throwsException(e);
-				}
-	           CustomTestNGListener.extentTest.get().log(Status.FAIL, "Step failed: ", 
-	               			MediaEntityBuilder.createScreenCaptureFromPath(fileName).build());
-	          
-	           }
-       } catch(Exception e) {
-    	   ExceptionHandler.throwsException(e);
-    	   throw e;
-       }
     }
 
     /**
@@ -166,18 +91,17 @@ public class CustomTestNGListener implements ITestListener {
      * @param result - the result
      */
     @Override
-    public synchronized void onTestSkipped(ITestResult result) {
+    public void onTestSkipped(ITestResult result) {
       logger.debug("*******In onTestSkipped function*******");
-      extentTest.get().log(Status.SKIP, "Test Skipped");
     }
     
     /**
      * Extent report pre-processing function.
      */
-    public static synchronized void extentReportPreProcessing() {
+    public synchronized static void extentReportPreProcessing() {
         logger.debug("*******In extentReportPreProcessing function*******");
     	
-    	ExtentTest test = extent.createTest("Test Coverage Report");
+        ExtentManagerUtility.setExtentTest(ExtentManagerUtility.getExtentReports().createTest("Test Coverage Report"));
 
         try {
            
@@ -207,33 +131,40 @@ public class CustomTestNGListener implements ITestListener {
                 /**
                  *  Parse the jacoco.xml file into a Document
                  */
-                FileInputStream inputStream = new FileInputStream(FileSearchUtility.searchFile("temp", "jacoco.xml"));
-                Document doc = builder.parse(inputStream);
-
-
-                /**
-                 * Now you have the Document object, you can work with it as needed.
-                 * 
-                 * For example, you can print the root element.
-                 */
-                logger.info("Root element: " + doc.getDocumentElement().getNodeName());
-
-            
-            /**
-             * Extract and log coverage information
-             */
-            extractAndLogCoverageInfo(doc, test);
-            
-            /**
-             * Close the input stream
-             */
-            inputStream.close();
+                try (FileInputStream inputStream = new FileInputStream(FileSearchUtility.searchFile("temp", "jacoco.xml")))
+                {
+	                Document doc = builder.parse(inputStream);
+	
+	
+	                /**
+	                 * Now you have the Document object, you can work with it as needed.
+	                 * 
+	                 * For example, you can print the root element.
+	                 */
+	                logger.info("Root element: " + doc.getDocumentElement().getNodeName());
+	
+	            
+		            /**
+		             * Extract and log coverage information
+		             */
+		            extractAndLogCoverageInfo(doc, ExtentManagerUtility.getExtentTest());
+		            
+		            /**
+		             * Close the input stream
+		             */
+		            inputStream.close();
+                } catch (Exception e) {
+                    ExceptionHandler.throwsException(e);
+                }
 
         } catch (Exception e) {
         	ExceptionHandler.throwsException(e);
         }
-        
-        extent.flush();
+    }
+    
+    @Override
+    public void onFinish(ITestContext context) {
+        logger.debug("******* Test Suite Finished *******");
     }
     
     /**
@@ -300,6 +231,7 @@ public class CustomTestNGListener implements ITestListener {
                 }
             }
         }
+        ExtentManagerUtility.flush();
         } catch(Exception e) {
         	ExceptionHandler.throwsException(e);
         	throw e;

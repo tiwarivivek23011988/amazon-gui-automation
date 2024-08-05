@@ -46,14 +46,13 @@ public class AmazonSearchStepDefinition {
 	 * User navigates to amazon page.
 	 */
 	@Given("User navigates to amazon page")
-	public void userNavigatesToAmazonPage() {
+	public synchronized void userNavigatesToAmazonPage() {
 		logger.debug("*******In userNavigatesToAmazonPage function*******" +"\n"+Thread.currentThread().getName());
 		try {
 			String url = (String) WebDriverUtilities.hashMap.get("url");
 			driver.get(url);
 		} catch(Exception e) {
 			ExceptionHandler.throwsException(e);
-			throw e;
 		}
 	}
 	
@@ -65,16 +64,12 @@ public class AmazonSearchStepDefinition {
 	 * @param productName - the product name to be provided in search box
 	 */
 	@When("User selects {string} from categories dropdown and types {string}")
-	public void userSelectsCategoryValueAndTypesProductName(String dropdownValue, String productName) {
+	public synchronized void userSelectsCategoryValueAndTypesProductName(String dropdownValue, String productName) {
 		logger.debug("*******In userSelectsCategoryValueAndTypesProductName function*******");
-		try {
-			boolean isElementSelected = landingPage.selectCategoryFromDropdown(dropdownValue);
-			Assert.assertTrue(isElementSelected);
-			Assert.assertTrue(landingPage.inputTextInSearchBox(productName));
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+		boolean isElementSelected = landingPage.selectCategoryFromDropdown(dropdownValue);
+		Assert.assertTrue(isElementSelected);
+		Assert.assertTrue(landingPage.inputTextInSearchBox(productName));
+		
 	}
 	
 	/**
@@ -83,15 +78,10 @@ public class AmazonSearchStepDefinition {
 	 * @param productName - the product name
 	 */
 	@Then("User validates auto-complete suggestions align with the provided {string}")
-	public void userValidatesAutoCompleteSuggestionsWithProductName(String productName) {
-		try {
-			logger.debug("*******In userValidatesAutoCompleteSuggestionsWithProductName function*******");
-			boolean flag = landingPage.checkAutoCompleteSuggestions(productName);
-			Assert.assertTrue(flag);
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+	public synchronized void userValidatesAutoCompleteSuggestionsWithProductName(String productName) {
+		logger.debug("*******In userValidatesAutoCompleteSuggestionsWithProductName function*******");
+		boolean flag = landingPage.checkAutoCompleteSuggestions(productName);
+		Assert.assertTrue(flag);
 	}
 	
 	/**
@@ -100,15 +90,9 @@ public class AmazonSearchStepDefinition {
 	 * @param productName - the product name
 	 */
 	@Then("User clicks on {string} from auto-complete option thus suggested")
-	public void userClicksOnAutoCompleteSuggestionMatchingProductName(String productName) {
+	public synchronized void userClicksOnAutoCompleteSuggestionMatchingProductName(String productName) {
 		logger.debug("*******In userClicksOnAutoCompleteSuggestionMatchingProductName function*******");
-		try {
-			Assert.assertTrue(landingPage.checkForPresenceOfAutoCompleteSuggestion(productName));
-			Assert.assertTrue(landingPage.clickElementMatchingAutoSuggestedText(productName));
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+		Assert.assertTrue(landingPage.clickElementMatchingAutoSuggestedText(productName));
 	}
 	
 	/**
@@ -117,14 +101,9 @@ public class AmazonSearchStepDefinition {
 	 * @param productName - the product name
 	 */
 	@And("User validates that {string} search returns products catalog list")
-	public void userValidatesPresenceOfProductResultsForTheSearchedProduct(String productName) {
+	public synchronized void userValidatesPresenceOfProductResultsForTheSearchedProduct(String productName) {
 		logger.debug("*******In userValidatesPresenceOfProductResultsForTheSearchedProduct function*******");
-		try {
-			Assert.assertTrue(landingPage.storeResultsCatalogElementsText(productName).size()>0);
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+		Assert.assertTrue(landingPage.storeResultsCatalogElementsText(productName).size()>0);
 	}
 	
 	/**
@@ -133,14 +112,10 @@ public class AmazonSearchStepDefinition {
 	 * @param productName - the product name
 	 */
 	@Then("User clicks on the {string} product from resulting product-catalog list")
-	public void userClicksOnTheProductFromResultingProductCatalogList(String productName) {
+	public synchronized void userClicksOnTheProductFromResultingProductCatalogList(String productName) {
 		logger.debug("*******In userClicksOnTheProductFromResultingProductCatalogList function*******");
-		try {
-			Assert.assertTrue(landingPage.clickOnFirstResultFromResultsCatalog(productName));
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+		Assert.assertTrue(landingPage.clickOnFirstResultFromResultsCatalog(productName));
+		
 	}
 	
 	/**
@@ -149,13 +124,10 @@ public class AmazonSearchStepDefinition {
 	 * @param productName - the product name
 	 */
 	@And("User validates that {string} specification page opens in new tab")
-	public void userValidatesThatProductSpecificationPageOpensInNewTab(String productName) {
-		try {
-			logger.debug("*******In userValidatesThatProductSpecificationPageOpensInNewTab function*******");
-			Assert.assertTrue(landingPage.getProductNameFromTitle().toLowerCase().contains(productName.toLowerCase()));
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+	public synchronized void userValidatesThatProductSpecificationPageOpensInNewTab(String productName) {
+	
+		logger.debug("*******In userValidatesThatProductSpecificationPageOpensInNewTab function*******");
+		Assert.assertTrue(landingPage.getProductNameFromTitle().toLowerCase().contains(productName.toLowerCase()));
+
 	}
 }

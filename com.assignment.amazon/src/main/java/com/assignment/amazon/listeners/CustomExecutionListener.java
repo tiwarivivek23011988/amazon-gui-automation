@@ -11,7 +11,6 @@ import org.testng.IExecutionListener;
 
 import com.assignment.amazon.configuration.Setup;
 import com.assignment.amazon.exceptions.ExceptionHandler;
-
 /**
  * {@summary}
  * 
@@ -36,12 +35,6 @@ public class CustomExecutionListener implements IExecutionListener{
   	@Override
 	  public void onExecutionStart() {
 		logger.debug("*******In onExecutionStart function*******");
-		try {
-			CustomTestNGListener.createInstance();
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
 	  }
 
 	/**
@@ -50,6 +43,7 @@ public class CustomExecutionListener implements IExecutionListener{
   	@Override
 	  public void onExecutionFinish() {
 		logger.debug("*******onExecutionFinish function*******");
+		
 		try {
 			CustomTestNGListener.extentReportPreProcessing();
 			Setup.killDanglingBrowserProcessReferences();

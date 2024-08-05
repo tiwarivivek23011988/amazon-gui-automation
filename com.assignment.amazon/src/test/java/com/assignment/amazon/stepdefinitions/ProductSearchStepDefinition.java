@@ -14,7 +14,6 @@ import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 
 import com.assignment.amazon.drivermanager.CustomWebDriverManager;
-import com.assignment.amazon.exceptions.ExceptionHandler;
 import com.assignment.amazon.pages.ProductPage;
 
 import io.cucumber.datatable.DataTable;
@@ -55,9 +54,9 @@ public class ProductSearchStepDefinition {
 	 */
 	
 	@Given("User navigates to product specification page") 
-	public void userNavigatesToProductSpecificationPage(DataTable dataTable){
+	public synchronized void userNavigatesToProductSpecificationPage(DataTable dataTable){
 		logger.debug("*******In userNavigatesToProductSpecificationPage function*******");
-		try {
+		
 			List<Map<String, String>> data = dataTable.asMaps(String.class, String.class);
 		    String categoryType = null;
 		    String searchText = null;
@@ -71,24 +70,17 @@ public class ProductSearchStepDefinition {
 			amazonSearchStepDef.userClicksOnAutoCompleteSuggestionMatchingProductName(searchText);
 			amazonSearchStepDef.userClicksOnTheProductFromResultingProductCatalogList(searchText);
 			amazonSearchStepDef.userValidatesThatProductSpecificationPageOpensInNewTab(searchText);
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+		
 	}
 	
 	/**
 	 * User clicks on visit apple store link.
 	 */
 	@When("User clicks on visit apple store link")
-	public void userClicksOnVisitAppleStoreLink() {
+	public synchronized void userClicksOnVisitAppleStoreLink() {
 		logger.debug("*******In userClicksOnVisitAppleStoreLink function*******");
-		try {
-			Assert.assertTrue(productPage.clickOnVisitAppleStoreLink());
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+		Assert.assertTrue(productPage.clickOnVisitAppleStoreLink());
+		
 	}
 	
 	/**
@@ -97,14 +89,9 @@ public class ProductSearchStepDefinition {
 	 * @param productType the product type
 	 */
 	@And("User clicks on {string} link")
-	public void userClicksOnProductTypeLink(String productType) {
+	public synchronized void userClicksOnProductTypeLink(String productType) {
 		logger.debug("*******In userClicksOnProductTypeLink function*******");
-		try {
-			Assert.assertTrue(productPage.clickOnAppleWatchLink(productType));
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+		Assert.assertTrue(productPage.clickOnAppleWatchLink(productType));
 	}
 	
 	/**
@@ -114,14 +101,9 @@ public class ProductSearchStepDefinition {
 	 * @param productType the product type
 	 */
 	@And("User selects {string} from {string}")
-	public void userSelectsProductName(String productName, String productType) {
+	public synchronized void userSelectsProductName(String productName, String productType) {
 		logger.debug("*******In userSelectsProductName function*******");
-		try {
-			Assert.assertTrue(productPage.clickOnProductSublistElement(productType, productName));
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+		Assert.assertTrue(productPage.clickOnProductSublistElement(productType, productName));
 	}
 	
 	/**
@@ -130,14 +112,9 @@ public class ProductSearchStepDefinition {
 	 * @param productName the product name
 	 */
 	@Then("User validates {string} on apple store page")
-	public void userValidatesProductNameOnAppleStorePage(String productName) {
+	public synchronized void userValidatesProductNameOnAppleStorePage(String productName) {
 		logger.debug("*******In userValidatesProductNameOnAppleStorePage function*******");
-		try {
-			Assert.assertTrue(productPage.verifyProductSubTypeText(productName));
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+		Assert.assertTrue(productPage.verifyProductSubTypeText(productName));
 	}
 	
 	/**
@@ -146,14 +123,9 @@ public class ProductSearchStepDefinition {
 	 * @param productName the product name
 	 */
 	@Then("User validates quick look presence for {string} and clicks on it")
-	public void userValidatesQuickLookPresenceAndClicksOnIt(String productName) {
-		logger.debug("*******In userValidatesQuickLookPresenceAndClicksOnIt function*******");
-		try {
-			Assert.assertTrue(productPage.verifyQuickLookAndClickOnIt(productName));
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+	public synchronized void userValidatesQuickLookPresenceAndClicksOnIt(String productName) {
+		logger.debug("*******In userValidatesQuickLookPresenceAndClicksOnIt function*******");	
+		Assert.assertTrue(productPage.verifyQuickLookAndClickOnIt(productName));
 	}
 	
 	/**
@@ -162,13 +134,9 @@ public class ProductSearchStepDefinition {
 	 * @param productName the product name
 	 */
 	@Then("User performs mouse hover on the {string} and validates presence of products magnified image")
-	public void userPerformsMouseHoverOnTheProductAndVlidatesMagnifiedProductImagePresence(String productName) {
+	public synchronized void userPerformsMouseHoverOnTheProductAndVlidatesMagnifiedProductImagePresence(String productName) {
 		logger.debug("*******In userPerformsMouseHoverOnTheProductAndVlidatesMagnifiedProductImagePresence function*******");
-		try {
-			Assert.assertTrue(productPage.mouseHoverOnImageAndVerifyMagnifiedImage(productName));
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
+		Assert.assertTrue(productPage.mouseHoverOnImageAndVerifyMagnifiedImage(productName));
+		
 	}
 }

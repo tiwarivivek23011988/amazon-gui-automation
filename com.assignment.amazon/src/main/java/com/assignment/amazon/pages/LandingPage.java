@@ -44,6 +44,9 @@ public class LandingPage {
 		PageFactory.initElements(driver, this);
 	}
 	
+	@FindBy(id="nav-search-bar-form")
+	WebElement formId;
+	
 	/** The search web element. */
 	@FindBy(xpath = "//div[@id='nav-search-dropdown-card']//child::select[@id='searchDropdownBox']/option")
 	List<WebElement> searchWebElement;
@@ -53,7 +56,7 @@ public class LandingPage {
 	WebElement selectWebElement;
 	
 	/**Category drop down selected text web-element */
-	@FindBy(id="nav-search-label-id")
+	@FindBy(xpath="//div[@data-value='search-alias=aps']/span")
 	WebElement categoryTextToVerify;
 	
 	/** The overlay element */
@@ -61,14 +64,17 @@ public class LandingPage {
 	WebElement overLayElement;
 	
 	/** The category drop-down by id. */
-	@FindBy(id = "nav-search-dropdown-card")
+	@FindBy(xpath = "//form[@id='nav-search-bar-form']//div[contains(@class,'nav-search-scope')]")
 	WebElement categoryDropDownById;
 	
 	/** The search text box. */
-	@FindBy(id="twotabsearchtextbox")
+	@FindBy(css="#twotabsearchtextbox")
 	WebElement searchBox;
 	
-	@FindBy(xpath="//div[@id='nav-flyout-searchAjax']//div[@role='button']")
+	@FindBy(xpath="//div[@class='two-pane-results-container']")
+	WebElement autoCompleteBox;
+	
+	@FindBy(css="#nav-flyout-searchAjax .autocomplete-results-container div.s-suggestion-container > div[role='button']")
 	List<WebElement> autoCompleteSuggestions;
 	
 	@FindBy(id="nav-flyout-searchAjax")
@@ -101,25 +107,39 @@ public class LandingPage {
 	public synchronized boolean selectCategoryFromDropdown(String dropDownValue) {
 		try {
 		logger.debug("*******In selectCategoryFromDropdown function*******");
+		WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(formId);
+		int i=0;
 		helperFunctionToHandleCategoryDropDown();
-		int index=0;
-		for(WebElement element: searchWebElement) {
-		WebDriverUtilities.scrollToView(element);
-		WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
-		boolean flag=false;
-		if(element.getText().equals(dropDownValue)) {
-			flag=helperFunctionToVerifyCategoryDropDownValue(element, categoryTextToVerify, index, dropDownValue);
-			if(flag) {
+		List<String> elementTexts = searchWebElement.stream().map(x -> x.getText()).collect(Collectors.toList());
+		logger.info("Element Texts Are => "+elementTexts);
+		logger.info("Element Texts Size Is => "+elementTexts.size());
+		logger.info("Elements Size Is => "+searchWebElement.size());
+		while(i<searchWebElement.size()) {
+		WebDriverUtilities.keyPressEventUsingActionsChord(Keys.ARROW_DOWN);
+		WebDriverUtilities.waitForElementVisibilityUsingFluentWait(searchWebElement.get(i));
+		WebDriverUtilities.scrollToView(searchWebElement.get(i));
+		WebDriverUtilities.waitForElementClickabilityUsingFluentWait(searchWebElement.get(i));
+		if(elementTexts.get(i).equalsIgnoreCase(dropDownValue.trim()) && searchWebElement.get(i).getText().equalsIgnoreCase(dropDownValue.trim())) {
+			logger.info("Index inside if is => "+i);
+			if(!categoryTextToVerify.getText().equals(dropDownValue.trim())) {
+				WebDriverUtilities.keyPressEventUsingActionsChord(Keys.ARROW_UP);
+			}
+			WebDriverUtilities.performJavaScriptClick(searchWebElement.get(i));
+			WebDriverUtilities.waitForElementVisibilityUsingFluentWait(categoryTextToVerify);
+			logger.info("Text to verify is => "+searchWebElement.get(i).getText());
+			logger.info("Extracted Text is => "+elementTexts.get(i));
+			logger.info("Text verified is => "+categoryTextToVerify.getText());
+			if(!(categoryTextToVerify.getText().equalsIgnoreCase(dropDownValue.trim())
+					&& searchWebElement.get(i).getText().equalsIgnoreCase(dropDownValue.trim()))) {
+				logger.info("Text does not match => "+categoryTextToVerify.getText().equalsIgnoreCase(searchWebElement.get(i).getText()));
+			} else {
 				return true;
 			}
+		} else {
+			logger.info("Text to verify inside else is => "+searchWebElement.get(i).getText());
+			logger.info("Index inside else is => "+i);
 		}
-		if(!flag) {
-			if(helperFunctionToVerifyCategoryDropDownValue(element, categoryTextToVerify, index, dropDownValue)) {
-				return true;
-			}
-		}
-		WebDriverUtilities.keyPressEventUsingActionsClickAndHold(Keys.DOWN);
-		index++;
+		i++;
 		}
 	  } catch(Exception e) {
 		  ExceptionHandler.throwsException(e);
@@ -128,42 +148,7 @@ public class LandingPage {
 		return false;
 	}
 	
-	/**
-	 * Select category from drop-down.
-	 *
-	 * @param currentElement - current Element.
-	 * @param elementToVerify - Element to verify
-	 * @param optionIndex - category drop down element index
-	 * @param expectedValue - expected category type
-	 * 
-	 * @return true, if successful
-	 * 
-	 */
-	private boolean helperFunctionToVerifyCategoryDropDownValue(WebElement currentElement, WebElement elementToVerify, int optionIndex, String expectedValue) {
-		try {
-		helperFunctionToHandleCategoryDropDown();
-		for(WebElement element: searchWebElement) {
-			if(!element.getText().equals(currentElement.getText())) {
-				WebDriverUtilities.selectByIndexUsingJavascript(currentElement, optionIndex);
-				WebDriverUtilities.waitForElementVisibilityUsingFluentWait(elementToVerify);
-				WebDriverUtilities.scrollToView(elementToVerify);
-			}
-			if(elementToVerify.getText().equals(expectedValue)) {
-				WebDriverUtilities.performJavaScriptClick(currentElement);
-				return true;
-			}
-			WebDriverUtilities.keyPressEventUsingActionsClickAndHold(Keys.DOWN);
-		   }
-		
-			return false;
-		} catch(Exception e) {
-			ExceptionHandler.throwsException(e);
-			throw e;
-		}
-	}
-	
-	
-	private void helperFunctionToHandleCategoryDropDown() {
+	private synchronized void helperFunctionToHandleCategoryDropDown() {
 		try {
 		WebDriverUtilities.scrollToView(categoryDropDownById);
 		WebDriverUtilities.moveToElementAndPerformElementClickUsingActions(categoryDropDownById);
@@ -182,17 +167,18 @@ public class LandingPage {
 	 * @return true, if successful
 	 */
 	public boolean inputTextInSearchBox(String inputText) {
-	try {
-		logger.debug("*******In inputTextInSearchBox function*******");
-		WebDriverUtilities.waitForElementVisibilityUsingFluentWait(searchBox);
-		WebDriverUtilities.scrollToView(searchBox);
-		searchBox.clear();
-		searchBox.sendKeys(inputText);
-		return true;
-	 } catch(Exception e) {
-		  ExceptionHandler.throwsException(e);
-		  throw e;
-	  }
+		try {
+			logger.debug("*******In inputTextInSearchBox function*******");
+			WebDriverUtilities.waitForElementVisibilityUsingFluentWait(searchBox);
+			WebDriverUtilities.scrollToView(searchBox);
+			searchBox.click();
+			searchBox.clear();
+			WebDriverUtilities.keyPressEventUsingActionsRelease(searchBox, inputText);
+			return true;
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 	
 	/**
@@ -200,21 +186,24 @@ public class LandingPage {
 	 *
 	 * @return - the list
 	 */
-	public boolean checkAutoCompleteSuggestions(String productName) {
+	public synchronized boolean checkAutoCompleteSuggestions(String productName) {
 		try {
 			logger.debug("*******In storeAutoCompleteSuggestions function*******");
-			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
 			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 			for(WebElement element:autoCompleteSuggestions) {
-				WebDriverUtilities.moveToElementUsingActions(element);
-				WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
-				String attributeTextFromAutoCompleteSearchBox=element.getAttribute("aria-label").toString();
-				if(attributeTextFromAutoCompleteSearchBox.length()==productName.length()) {
-					if(!attributeTextFromAutoCompleteSearchBox.equalsIgnoreCase(productName)) {
+				try {
+					WebDriverUtilities.moveToElementUsingActions(element);
+					WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
+					String attributeTextFromAutoCompleteSearchBox=element.getAttribute("aria-label").toString();
+					if(attributeTextFromAutoCompleteSearchBox.length()==productName.length()) {
+						if(!attributeTextFromAutoCompleteSearchBox.equalsIgnoreCase(productName)) {
+							return false;
+						}
+					}else if(!attributeTextFromAutoCompleteSearchBox.toLowerCase().contains(productName.toLowerCase())) {
 						return false;
 					}
-				}else if(!attributeTextFromAutoCompleteSearchBox.toLowerCase().contains(productName.toLowerCase())) {
-					return false;
+				} catch(Exception e) {
+					continue;
 				}
 			}
 			return true;
@@ -230,24 +219,25 @@ public class LandingPage {
 	 * @param inputText - the input text
 	 * @return the web element
 	 */
-	public boolean clickElementMatchingAutoSuggestedText(String inputText) {
-		try {
+	public synchronized boolean clickElementMatchingAutoSuggestedText(String inputText) {
+	
 			logger.debug("*******In returnElementMatchingAutoSuggestedText function*******");
-			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBox);
 			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 			for(WebElement element: autoCompleteSuggestions) {
-				WebDriverUtilities.waitForElementVisibilityUsingFluentWait(element);
-				WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
-				 if(element.getText().equalsIgnoreCase(inputText.toLowerCase()) ||
-				 element.getText().toLowerCase().contains(inputText.toLowerCase())) {
-					 WebDriverUtilities.performJavaScriptClick(element);
-					 return true;
+				try {
+					WebDriverUtilities.waitUntilAttributeNotEmpty(element, "aria-label");
+					 WebDriverUtilities.moveToElementUsingActions(element);
+					 WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
+					 if(element.getAttribute("aria-label").toString().equalsIgnoreCase(inputText.toLowerCase()) ||
+						 element.getAttribute("aria-label").toString().toLowerCase().contains(inputText.toLowerCase())) {
+						 WebDriverUtilities.keyPressEventUsingActionsRelease(element, Keys.chord(Keys.DOWN, Keys.ENTER));
+						 return true;
+					 }
+				} catch(Exception e) {
+					continue;
 				}
 			}
-		 } catch(Exception e) {
-			  ExceptionHandler.throwsException(e);
-			  throw e;
-		}
+	
 		return false;
 	}
 
@@ -257,21 +247,26 @@ public class LandingPage {
 	 * @param searchText - the search text
 	 * @return true, if successful
 	 */
-	public boolean checkForPresenceOfAutoCompleteSuggestion(String searchText) {
-		try {
+	public synchronized boolean checkForPresenceOfAutoCompleteSuggestion(String searchText) {
+			try {
 			logger.debug("*******In checkForPresenceOfAutoCompleteSuggestion function*******");
-			WebDriverUtilities.waitForAllAjaxCallsToCompleteUsingFluentWait(searchBoxAjax);
 			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(autoCompleteSuggestions);
 			for(WebElement element: autoCompleteSuggestions) {
-				WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
-				if(element.getText().equalsIgnoreCase(searchText) || element.getText().toLowerCase().contains(searchText.toLowerCase())) {
+				try {
+				WebDriverUtilities.scrollToView(element);
+				WebDriverUtilities.moveToElementUsingActions(element);
+				if(element.getAttribute("aria-label").toString().equalsIgnoreCase(searchText.trim()) || element.getAttribute("aria-label").toString().toLowerCase().contains(searchText.trim().toLowerCase())) {
 						return true;
 				}
+				} catch(Exception e) {
+					continue;
+				}
+			 }
+			}catch(Exception e) {
+				ExceptionHandler.throwsException(e);
+				throw e;
 			}
-		 } catch(Exception e) {
-			  ExceptionHandler.throwsException(e);
-			  throw e;
-		}
+		 
 		return false;
 	}
 	
@@ -281,21 +276,32 @@ public class LandingPage {
 	 * @param searchText - the search text
 	 * @return true, if successful
 	 */
-	public boolean clickOnFirstResultFromResultsCatalog(String searchText) {
+	public synchronized boolean clickOnFirstResultFromResultsCatalog(String searchText) {
 		try {
 			logger.debug("*******In clickOnFirstResultFromResultsCatalog function*******");
+			WebDriverUtilities.waitForElementsVisibilityUsingFluentWait(listOfSearchedProducts);
 			for(WebElement element:listOfSearchedProducts) {
-				String formattedString=element.getText().replaceAll("[^A-Za-z0-9 ]+", "");
-				if(formattedString.equalsIgnoreCase(searchText) || formattedString.toLowerCase().contains(searchText.toLowerCase())) {
-					element.click();
-					return true;
+				try {
+					WebDriverUtilities.waitForElementVisibilityUsingFluentWait(element);
+					WebDriverUtilities.moveToElementUsingActions(element);
+					String formattedString=element.getText().replaceAll("[^A-Za-z0-9 ]+", "");
+					if(formattedString.equalsIgnoreCase(searchText) || formattedString.toLowerCase().contains(searchText.toLowerCase())) {
+						WebDriverUtilities.scrollToView(element);
+						WebDriverUtilities.waitForElementClickabilityUsingFluentWait(element);
+						WebDriverUtilities.performJavaScriptClick(element);
+						return true;
+					}
+				} catch(Exception e) {
+					continue;
 				}
+	
 			}
-	 	} catch(Exception e) {
-		  ExceptionHandler.throwsException(e);
-		  throw e;
-	  }
+	 	
 		return false;
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
+		}
 	}
 	
 	/**
@@ -304,14 +310,14 @@ public class LandingPage {
 	 * @param searchText - the search text
 	 * @return the list
 	 */
-	public List<String> storeResultsCatalogElementsText(String searchText) {
+	public synchronized List<String> storeResultsCatalogElementsText(String searchText) {
 		try {
 			logger.debug("*******In storeResultsCatalogElementsText function*******");
 			WebDriverUtilities.waitUntilVisibilityOfAllElementsLocated(listOfSearchedProducts);
 			return listOfSearchedProducts.stream().filter(x -> (x.getText().replaceAll("[^A-Za-z0-9 ]+", "").equalsIgnoreCase(searchText) || x.getText().replaceAll("[^A-Za-z0-9 ]+", "").toLowerCase().contains(searchText.toLowerCase()))).map(x -> x.getText().replaceAll("[^A-Za-z0-9 ]+", "")).collect(Collectors.toList());
-		 } catch(Exception e) {
-			  ExceptionHandler.throwsException(e);
-			  throw e;
+		} catch(Exception e) {
+			ExceptionHandler.throwsException(e);
+			throw e;
 		}
 	}
 	
@@ -320,7 +326,7 @@ public class LandingPage {
 	 *
 	 * @return the product name from title
 	 */
-	public String getProductNameFromTitle() {
+	public synchronized String getProductNameFromTitle() {
 		try {
 			logger.debug("*******In getProductNameFromTitle function*******");
 			WebDriverUtilities.switchToWindow();
